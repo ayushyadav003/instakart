@@ -1,0 +1,116 @@
+// @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Kumbh+Sans:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap');
+body {
+  padding: 0;
+  margin: 0;
+  // font-family: Kumbh Sans, sans-serif;
+  font-family: 'Epilogue', sans-serif;
+  background-color: #f8f8f8;
+
+  a {
+    text-decoration: none;
+    color: #fff;
+  }
+  button {
+    text-transform: capitalize !important;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .MuiTableRow-root:nth-child(even) {
+    background-color: #fff;
+  }
+
+  .MuiTableRow-root:nth-child(odd) {
+    background-color: #ffffff;
+  }
+  .autocomplete-wrapper.error .MuiTextField-root {
+    border-color: #d32f2f; /* Adjust based on your design */
+  }
+
+  .autocomplete-wrapper .MuiFormHelperText-root {
+    color: #d32f2f; /* Adjust based on your design */
+  }
+
+  /* Firefox */
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+  .optionsWrapper {
+    background-image: url('/images/dashboardbg.svg');
+    height: 75px;
+    // width: 100%;
+    background-color: #fff;
+    border-bottom: 1px solid #ebeaf2;
+    display: flex;
+    gap: 3rem;
+    justify-content: flex-start;
+    padding: 0 2rem;
+    align-items: flex-end;
+    a,
+    span {
+      color: #000;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0 0 15px 0;
+    }
+  }
+  thead {
+    tr {
+      th {
+        font-weight: 600 !important;
+      }
+    }
+  }
+  .counter {
+    background-color: #fff;
+    padding: 13px;
+    width: 230px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .status {
+    padding: 4px;
+    border-radius: 4px;
+    color: #fff;
+  }
+  .pending {
+    background-color: rgba(145, 54, 54, 0.81);
+  }
+  .error {
+    color: rgb(185, 26, 26);
+  }
+  .success {
+    background-color: #3c7430ce;
+  }
+}
+.tableContainer {
+  padding: 10px;
+  table {
+    border-collapse: separate; /* Ensure border-spacing works */
+    border-spacing: 0 8px; /* Add margin between rows */
+    width: 100%; /* Make the table take full width */
+  }
+
+  th {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    text-align: center;
+    border: none;
+  }
+
+  td {
+    text-align: center;
+    border-radius: 10px;
+    border: none;
+    font-weight: normal;
+    padding: 5px;
+  }
+}

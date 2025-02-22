@@ -1,0 +1,132 @@
+.footerWrapper {
+  background-color: #034460;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  img {
+    width: 300px;
+    object-fit: contain;
+  }
+  .footerInner {
+    height: 400px;
+    padding: 2% 5%;
+    display: flex;
+    gap: 2%;
+    .column {
+      width: 400px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      img {
+        height: 70px;
+      }
+      p {
+        line-height: 25px;
+      }
+      h2,
+      h3 {
+        color: #f9bb0d;
+      }
+      a {
+        margin-top: 2rem;
+      }
+      a:hover {
+        color: #f9bb0d;
+      }
+      .socialIcons {
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        svg {
+          font-size: 24px;
+        }
+      }
+    }
+  }
+  .inner2 {
+    background-color: #041c2f;
+    height: 40px;
+    padding: 2% 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    p,
+    a {
+      color: #6a838c;
+      margin: 0;
+      font-size: 16px;
+    }
+    div {
+      display: flex;
+      align-items: center;
+      gap: 2em;
+    }
+  }
+}
+@media screen and (max-width: 768px) {
+  .footerWrapper {
+    img {
+      width: 100%;
+      object-fit: contain;
+    }
+    .footerInner {
+      height: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2%;
+      .column {
+        width: auto;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        img {
+          height: 70px;
+        }
+        p {
+          line-height: 25px;
+        }
+        h2,
+        h3 {
+          color: #f9bb0d;
+        }
+        a {
+          margin-top: 2rem;
+        }
+        a:hover {
+          color: #f9bb0d;
+        }
+        .socialIcons {
+          color: #fff;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          svg {
+            font-size: 24px;
+          }
+        }
+      }
+    }
+    .inner2 {
+      background-color: #041c2f;
+      height: 40px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      p,
+      a {
+        color: #6a838c;
+        margin: 0;
+        font-size: 16px;
+      }
+      div {
+        display: flex;
+        align-items: center;
+        gap: 2em;
+      }
+    }
+  }
+}
