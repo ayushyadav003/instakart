@@ -69,17 +69,17 @@ export default function Login() {
       const response = await axios(apiOptions)
       if (response?.data?.status === 200) {
         const resData = response?.data?.data
-        localStorage.setItem('blitzship-user-details', JSON.stringify(resData))
+        localStorage.setItem('instakart-user-details', JSON.stringify(resData))
         if (rememberMe) {
           localStorage.setItem(
-            'blitzship-remember-user',
+            'instakart-remember-user',
             JSON.stringify({
               email: values?.email,
               password: values?.password,
             }),
           )
           Cookies.set(
-            'blitzship-remember-user',
+            'instakart-remember-user',
             JSON.stringify({
               email: values?.email,
               password: values?.password,
@@ -107,7 +107,7 @@ export default function Login() {
   }
 
   useEffect(() => {
-    const user = Cookies.get('blitzship-remember-user')
+    const user = Cookies.get('instakart-remember-user')
     if (user) {
       const parsedUser = JSON.parse(user)
       formik.setValues({
