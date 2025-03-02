@@ -1,43 +1,31 @@
+import {
+  Call,
+  Dashboard,
+  Description,
+  ProductionQuantityLimits,
+  Quiz,
+  ShoppingBasket,
+} from '@mui/icons-material'
+
 export const sideBarOption = [
   {
     title: 'Dashboard',
-    icon: '/images/icons/layout.png',
-    link: '/dashboard/overview',
+    icon: <Dashboard />,
+    link: '/dashboard',
   },
   {
-    title: 'Track Order',
-    icon: '/images/icons/track.png',
-    link: '/track-order',
+    title: 'Products',
+    icon: <ShoppingBasket />,
+    link: '/products',
   },
   {
-    title: 'Create Order',
-    icon: '/images/icons/createOrder.png',
-    link: '/create-order',
+    title: 'Order',
+    icon: <ProductionQuantityLimits />,
+    link: '/orders',
   },
-  {
-    title: 'COD',
-    icon: '/images/icons/cod.webp',
-    link: '/cod',
-  },
-  {
-    title: 'Weight Discrepancy',
-    icon: '/images/icons/weight.png',
-    link: '/weight-discrepancy',
-  },
-
-  {
-    title: 'Rate Calculator',
-    icon: '/images/icons/calculator.png',
-    link: '/rate-calculator',
-  },
-  {
-    title: 'Revenue Calculator',
-    icon: '/images/icons/cal.png',
-    link: '/revenue-calculator',
-  },
-  { title: 'Invoice', icon: '/images/icons/invoice.png', link: '/invoice' },
-  { title: 'FAQ', icon: '/images/icons/faq.png', link: '/faq' },
-  { title: 'Support', icon: '/images/icons/support.png', link: '/support' },
+  { title: 'Invoice', icon: <Description />, link: '/invoice' },
+  { title: 'FAQ', icon: <Quiz />, link: '/faq' },
+  { title: 'Support', icon: <Call />, link: '/support' },
 ]
 export const mobileBottomOptions = [
   {

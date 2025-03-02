@@ -5,6 +5,8 @@ import DashboardLayout from '../layouts/DashboardLayout'
 import Signup from '../pages/login/Signup'
 import ForgetPassword from '../pages/login/ForgetPassword'
 import ResetPassword from '../pages/login/ResetPasswrod'
+import Dashboard from '../pages/dashboard/Dashboard'
+import Products from '../pages/products/Products'
 
 export default function Router() {
   return (
@@ -55,9 +57,17 @@ export default function Router() {
         <Route
           path="/dashboard"
           element={
-            <LoginLayout>
-              <Signup />
-            </LoginLayout>
+            <DashboardLayout>
+              <Dashboard />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <DashboardLayout>
+              <Products />
+            </DashboardLayout>
           }
         />
       </Routes>
