@@ -52,6 +52,14 @@ export default function Router() {
             </LoginLayout>
           }
         />
+        <Route
+          path="/dashboard"
+          element={
+            <LoginLayout>
+              <Signup />
+            </LoginLayout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   )

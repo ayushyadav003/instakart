@@ -1,12 +1,8 @@
-const apiUrl = 'https://api.blitzshipz.com'
-const apiUrl2 = 'https://backend.blitzshipz.com'
-// const apiUrl2 = 'https://staging-api.blitzshipz.com'
-// const stagingApiUrl = 'https://staging-api.blitzshipz.com'
-// const apiUrl = 'http://44.201.170.240'
-// const apiUrl = 'http://localhost:8080'
+// const apiUrl = 'https://api.blitzshipz.com'
+const apiUrl = 'http://localhost:5000'
 
 export const apiConfig = {
   //auth
-  signup: `${apiUrl}/api/auth/signup`,
-  signin: `${apiUrl}/api/auth/signin/`,
+  signup: `${apiUrl}/api/v1/auth/signup`,
+  login: `${apiUrl}/api/v1/auth/login`,
 }

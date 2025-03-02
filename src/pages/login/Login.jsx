@@ -58,7 +58,7 @@ export default function Login() {
     setLoading(true)
     try {
       const apiOptions = {
-        url: apiConfig.signin,
+        url: apiConfig.login,
         method: 'POST',
         data: values,
         maxBodyLength: Infinity,
@@ -67,8 +67,8 @@ export default function Login() {
         },
       }
       const response = await axios(apiOptions)
-      if (response?.data?.status === 200) {
-        const resData = response?.data?.data
+      if (response?.status === 200) {
+        const resData = response?.data
         localStorage.setItem('instakart-user-details', JSON.stringify(resData))
         if (rememberMe) {
           localStorage.setItem(
@@ -87,12 +87,7 @@ export default function Login() {
             { expires: 90 },
           )
         }
-
-        if (!resData?.emailVerified) {
-          dispatch(openVerifyPopup())
-        }
-
-        navigate('/dashboard/overview')
+        navigate('/dashboard')
         toast.success('Logged in Successfully')
 
         setLoading(false)
