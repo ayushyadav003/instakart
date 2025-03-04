@@ -16,15 +16,12 @@ import './login.scss'
 import { apiConfig } from '../../services/ApiConfig'
 import { useFormik } from 'formik'
 import axios from 'axios'
-import { useDispatch } from 'react-redux'
-import { openVerifyPopup } from '../../redux/features/userSlice'
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const navigate = useNavigate()
-  const dispatch = useDispatch()
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword)

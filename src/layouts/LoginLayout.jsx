@@ -21,8 +21,10 @@ export default function LoginLayout({ children }) {
   const [openDrawer, setOpenDrawer] = useState(false)
 
   useEffect(() => {
-    if (localStorage.getItem('accessToken')) {
-      navigate('/dashboard/overview')
+    const userData = localStorage.getItem('instakart-user-details')
+
+    if (JSON.parse(userData)?.token) {
+      navigate('/dashboard')
     }
 
     if (searchParams?.get('refKey')) {

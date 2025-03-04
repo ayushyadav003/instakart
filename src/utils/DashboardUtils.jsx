@@ -2,6 +2,7 @@ import {
   Call,
   Dashboard,
   Description,
+  DragIndicator,
   ProductionQuantityLimits,
   Quiz,
   ShoppingBasket,
@@ -23,6 +24,7 @@ export const sideBarOption = [
     icon: <ProductionQuantityLimits />,
     link: '/orders',
   },
+  { title: 'Themes', icon: <DragIndicator />, link: '/themes' },
   { title: 'Invoice', icon: <Description />, link: '/invoice' },
   { title: 'FAQ', icon: <Quiz />, link: '/faq' },
   { title: 'Support', icon: <Call />, link: '/support' },
@@ -240,68 +242,7 @@ export const banksList = [
   { name: 'Amana Bank' },
   { name: 'Cargills Bank' },
 ]
-export const dashboardInner = [
-  {
-    selector: 'overview',
-    title: 'Overview',
-    link: '/dashboard/overview',
-  },
-  {
-    selector: 'pickups',
-    title: 'Orders',
-    link: '/dashboard/pickups?item=10&page=1',
-  },
-  {
-    selector: 'NDR',
-    title: 'NDR',
-    link: '/dashboard/NDR',
-  },
-  {
-    selector: 'RTO',
-    title: 'RTO',
-    link: '/dashboard/RTO?item=10&page=1',
-  },
-  // {
-  //   selector: 'COD',
-  //   title: 'COD',
-  //   link: '/dashboard/COD?item=10&page=1',
-  // },
-  {
-    selector: 'cancelled-orders',
-    title: 'Cancelled',
-    link: '/dashboard/cancelled-orders?item=10&page=1',
-  },
-]
-export const supportCategory = ['Operation', 'Technical', 'Finanace', 'Other']
-export const supportSubCategory = {
-  Operation: [
-    'Delay in pickup',
-    'Order not delivered',
-    'Shipment showing lost/damage in tracking panel',
-    'Return goods not received',
-    'NDR reattempt request',
-    'Weight discrepancy',
-    'Cancel pickup request',
-  ],
-  Technical: [
-    'Unable to add warehouse',
-    'Unable to verify my email',
-    'Unable to verify my document',
-    'Issue in creating order',
-    'issue in placing order',
-  ],
-  Finanace: [
-    'COD payment not received yet',
-    'Invoice not generated',
-    'Issue in Invoice',
-    'Refund for the lost/damange not received',
-  ],
-  Other: [
-    "Issue with the pickup/delivery boy's behaviour",
-    'Issue with sales team support',
-    'My issue is not listed',
-  ],
-}
+
 export const faq = [
   {
     ques: 'How do I create an order on your website?',
@@ -428,50 +369,6 @@ export const faq = [
     ],
   },
 ]
-export const vendorList = {
-  DL: 'Delhivery',
-  DT: 'DTDC',
-  DX: 'Delhivery Air',
-}
-export const rateCalDays = {
-  ZONEA: '2 day',
-  ZONEB: '3 days',
-  ZONEC: '3-4 days',
-  ZONED: '4-5 days',
-  ZONEE: '5-6 days',
-}
-export const pickupRating = {
-  DL: '4.3',
-  AM: '4.3',
-  EC: '4.3',
-}
-export const destinationRating = {
-  DL: '4.4',
-  AM: '4.3',
-  EC: '4.3',
-}
-export const promotionalData = [
-  {
-    grade: 'Silver',
-    target: 'Target 100 per month',
-    discount: ['25%', '10%', '15%'],
-  },
-  {
-    grade: 'Gold',
-    target: 'Target 300 per month',
-    discount: ['20%', '8%', '12%'],
-  },
-  {
-    grade: 'Diamond',
-    target: 'Target 500 per month',
-    discount: ['12%', '6%', '8%'],
-  },
-  {
-    grade: 'Platinum',
-    target: 'Target 1000 per month',
-    discount: ['10%', '3%', '5%'],
-  },
-]
 export const rateTermsAndCondition = [
   'Above rates are inclusive of 18% GST.',
   'Chargeable weight will be the higher of actual or volumetric weight.',
@@ -480,14 +377,4 @@ export const rateTermsAndCondition = [
   'Any weight dispute due to incorrect weight declaration cannot be claimed.',
   'Reverse or RTO charges will be the same as forward charges.',
   'Fixed COD charge or COD % of the order value, whichever is higher, will be taken while calculating the COD fee.',
-  // 'Dead/Dry weight or volumetric weight whichever is higher will be taken while calculating the freight rates.',
-  // 'Fixed COD charge or COD % of the order value whichever is higher will be taken while calculating the COD fee.',
-  // 'Above prices are inclusive of GST.',
-  // 'The above pricing is subject to change based on fuel surcharges and courier company base rates.',
-  // 'Return charges may apply over and above the freight fee incase of E-com Express.',
-  // 'Volumetric weight is calculated LxBxH/5000 for all courier companies except for Fedex Surface, Aramex, Fedex Surface Light and Gati Surface. In case of Fedex surface, volumetric weight is calculated as LxBxH/4500, for Aramex, it is LxBxH/6000, for Fedex Surface Light, it is LxBxH/4500 and for Gati Surface, it is LxBxH/4500 (length, breadth, height has to be taken in Centimeters and divided by denominator, this will give the value in Kilograms).',
-  // 'The maximum liability if any is limited to whatever compensation the logistics partner offers to Company in event of a claim by the Merchant, provided such claim is raised by the Merchant within one (1) month from the date of such damage or loss or theft.',
 ]
-
-// site key -  6LdPgK8qAAAAAGrfcqCBochAu_zGbR-vT3theN7Y
-// secret key - 6LdPgK8qAAAAAFGgdQdgkz-qj7CQ0GsclJqX3GMy

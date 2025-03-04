@@ -7,6 +7,10 @@ import ForgetPassword from '../pages/login/ForgetPassword'
 import ResetPassword from '../pages/login/ResetPasswrod'
 import Dashboard from '../pages/dashboard/Dashboard'
 import Products from '../pages/products/Products'
+import ThemeListing from '../pages/themes/Themes'
+import CollectionPage from '../components/collection/Collections'
+import StoreLayout from '../layouts/store/StoreLayout'
+import ProductPage from '../components/productPage/ProductPage'
 
 export default function Router() {
   return (
@@ -68,6 +72,30 @@ export default function Router() {
             <DashboardLayout>
               <Products />
             </DashboardLayout>
+          }
+        />
+        <Route
+          path="/themes"
+          element={
+            <DashboardLayout>
+              <ThemeListing />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/:id/collection"
+          element={
+            <StoreLayout>
+              <CollectionPage />
+            </StoreLayout>
+          }
+        />
+        <Route
+          path="/:storeId/:productId"
+          element={
+            <StoreLayout>
+              <ProductPage />
+            </StoreLayout>
           }
         />
       </Routes>

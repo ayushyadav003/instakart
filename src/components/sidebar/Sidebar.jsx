@@ -25,9 +25,9 @@ function Sidebar() {
           <Tooltip title="My profile" placement="bottom-end">
             <Link to="/profile">
               {hide ? (
-                <img src="/images/dummy2.png" />
+                <img src="assets/images/logo/logo_light.png" />
               ) : (
-                <img src="/images/logo/logo2.svg" />
+                <img src="assets/images/logo/logo_light.png" />
               )}
             </Link>
           </Tooltip>

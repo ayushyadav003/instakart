@@ -1,12 +1,9 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   AccountBalanceWallet,
-  AccountCircle,
   ArrowBackIos,
-  ArrowForward,
-  KeyboardBackspace,
   Logout,
   Notifications,
 } from '@mui/icons-material'
@@ -20,12 +17,10 @@ function DashboardLayout({ children }) {
   const [openLogoutPopup, setOpenLogoutPopup] = useState(false)
   const [showBack, setShowBack] = useState(false)
   const [walletAmount, setWalletAmount] = useState(0)
-  const [hideNeedHelp, setHideNeedHelp] = useState(true)
-  const location = useLocation()
-
-  const firstName = localStorage.getItem('firstName')
-  const lastName = localStorage.getItem('lastName')
-  const email = localStorage.getItem('email')
+  const userData = JSON.parse(localStorage.getItem('instakart-user-details'))
+  const firstName = userData?.firstName || ''
+  const lastName = userData?.firstName || ''
+  const email = userData?.firstName || ''
   // const userID = localStorage.getItem("accountUserId");
 
   const { heading } = useSelector(({ current }) => current)

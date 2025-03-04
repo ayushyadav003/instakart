@@ -74,67 +74,6 @@
   }
 }
 
-.helpOpener {
-  position: absolute;
-  left: 0;
-  bottom: 55px;
-  z-index: 999;
-  background-color: #fec201;
-  padding: 5px 5px 2px 5px;
-  cursor: pointer;
-  border-radius: 0 5px 5px 0;
-  svg {
-    font-size: 14px;
-  }
-}
-.dummyWrapper {
-  position: absolute;
-  left: 10px;
-  display: flex;
-  bottom: 10px;
-  display: flex;
-  flex-direction: column;
-  z-index: 999;
-  img {
-    height: 80px;
-  }
-  .arrowIcon {
-    position: absolute;
-    cursor: pointer;
-    height: 45px;
-    right: 20px;
-    top: -30px;
-    height: fit-content;
-    background-color: #fec201;
-    padding: 5px;
-    display: flex;
-    border-radius: 5px;
-    font-size: 15px;
-  }
-  .box {
-    position: absolute;
-    height: 45px;
-    right: -80px;
-    top: -10px;
-    cursor: pointer;
-  }
-  p {
-    margin: 0;
-    font-size: 11px;
-    color: #2d3b48c7;
-    font-weight: 700;
-    position: absolute;
-    right: -60px;
-    top: 10px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  p:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
-}
 .loginLayout {
   .header {
     background-color: #000;
