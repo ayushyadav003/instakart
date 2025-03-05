@@ -1,0 +1,130 @@
+.add-product-container {
+  width: 50%;
+  margin: 0 auto;
+  padding: 20px;
+
+  @media (max-width: 768px) {
+    padding: 15px;
+
+    .header {
+      font-size: 20px;
+    }
+  }
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-container a {
+  margin-right: 10px;
+  color: #333;
+}
+
+.header {
+  margin: 0;
+}
+
+.form-group {
+  display: flex;
+  margin-bottom: 5%;
+  flex-direction: column;
+  align-items: baseline;
+}
+
+.form-group label {
+  text-align: left;
+  display: block;
+  margin-bottom: 2%;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.form-group textarea {
+  height: 100px;
+}
+
+.media-upload {
+  border: 1px dashed #ccc;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.media-preview {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.media-preview-item {
+  position: relative;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.remove-media {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: transparent;
+  // background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 12px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.pricing {
+  display: flex;
+}
+
+.pricing input {
+  margin-right: 10px;
+}
+
+.submit-button {
+  -webkit-border-radius: 10;
+  -moz-border-radius: 10;
+  border-radius: 10px;
+  -webkit-box-shadow: 2px 4px 0px #666666;
+  -moz-box-shadow: 2px 4px 0px #666666;
+  box-shadow: 2px 4px 0px #666666;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  background: #000000;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  &:hover {
+    background: #3d3d3d;
+    text-decoration: none;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}

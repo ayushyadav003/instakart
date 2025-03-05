@@ -116,7 +116,7 @@ export default function Login() {
     <div className="loginForm">
       {/* <img src={'/images/icons/logo.jpg'} alt="logo" height={100} /> */}
       <form onSubmit={formik.handleSubmit}>
-        <h2>Welcome to IntaKart!</h2>
+        <h2>Welcome to InstaKart!</h2>
         <TextField
           // label="Email"
           fullWidth
