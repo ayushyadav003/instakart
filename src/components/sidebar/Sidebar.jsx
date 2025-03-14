@@ -6,6 +6,7 @@ import {
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
 } from "@mui/icons-material";
+import { Tooltip } from "@mui/material";
 
 function Sidebar() {
   const location = useLocation();
@@ -21,7 +22,15 @@ function Sidebar() {
     <>
       <div className="sidebar-container" style={{ width: hide && "70px" }}>
         <div className="profileWrapper" height="50">
-          <Link to="/profile">Instakart</Link>
+          <Tooltip title="My profile" placement="bottom-end">
+            <Link to="/profile">
+              {hide ? (
+                <img src="assets/images/logo/logo_light.png" />
+              ) : (
+                <img src="assets/images/logo/logo_light.png" />
+              )}
+            </Link>
+          </Tooltip>
         </div>
         <div className="optionWrapper">
           {sideBarOption.map((option, i) => (

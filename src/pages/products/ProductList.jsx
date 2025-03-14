@@ -1,12 +1,14 @@
 import React from "react";
 import ProductItem from "./ProductItem";
 import "./ProductList.scss";
+import CommonTable from "../../components/common/CommonTable";
+import { productTableHead } from "../../utils/tableHead";
 
 const products = [
   {
     id: 1,
     image: "/assets/images/car.jpeg",
-    name: "SAY MY NAME - 2nd EP Album",
+    title: "SAY MY - 2nd EP Album",
     status: "Draft",
     inventory: "0 in stock for 2 variants",
     salesChannels: 11,
@@ -17,7 +19,7 @@ const products = [
   {
     id: 2,
     image: "/assets/images/car-1.jpeg",
-    name: "HOSHI X WOOZI - 1st Single Album 'BEAM' KiT Ver.",
+    title: "HOSHI X WOOZI - 1st Single Album 'BEAM' KiT Ver.",
     status: "Draft",
     inventory: "0 in stock",
     salesChannels: 11,
@@ -35,8 +37,9 @@ export default function ProductList() {
         <h2>Products</h2>
         <button className="add-product">Add Product</button>
       </div>
+      <CommonTable head={productTableHead} rows={products}  type={"products"}/>
 
-      <div className="filters">
+      {/* <div className="filters">
         <button className="active">All</button>
         <button>Active</button>
         <button>Draft</button>
@@ -57,7 +60,7 @@ export default function ProductList() {
         {products.map((product) => (
           <ProductItem key={product.id} product={product} />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

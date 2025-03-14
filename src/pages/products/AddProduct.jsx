@@ -1,23 +1,29 @@
 import React, { useState, useRef } from "react";
 import "./AddProduct.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 const AddProduct = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     status: "draft",
-    collection: "",
-    weight: "",
     price: "",
-    compareAtPrice: "",
+    comparePrice: "",
     media: [],
+    weight: "",
+    length: "",
+    breadth: "",
+    height: "",
+    quantity: 0,
+    // Add other fields from your schema if needed
   });
 
-  const fileInputRef = useRef(null); // Create a ref
+  const fileInputRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -40,11 +46,11 @@ const AddProduct = () => {
       media: prevData.media.filter((_, i) => i !== index),
     }));
     if (fileInputRef.current) {
-      fileInputRef.current.value = null; // Clear the input
+      fileInputRef.current.value = null;
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.title || !formData.price) {
@@ -54,16 +60,9 @@ const AddProduct = () => {
       return;
     }
 
-    if (!formData.price) {
-      toast.error("Price is required.", {
-        position: "bottom-right",
-      });
-      return;
-    }
-
     if (
-      formData.compareAtPrice &&
-      parseFloat(formData.price) >= parseFloat(formData.compareAtPrice)
+      formData.comparePrice &&
+      parseFloat(formData.price) >= parseFloat(formData.comparePrice)
     ) {
       toast.error("Price must be less than Compare-at price.", {
         position: "bottom-right",
@@ -71,7 +70,40 @@ const AddProduct = () => {
       return;
     }
 
-    console.log("Form Data:", formData);
+    const formDataToSend = new FormData();
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("description", formData.description);
+    formDataToSend.append("price", formData.price);
+    formDataToSend.append("comparePrice", formData.comparePrice);
+    formDataToSend.append("status", formData.status);
+    formDataToSend.append("weight", formData.weight);
+    formDataToSend.append("length", formData.length);
+    formDataToSend.append("breadth", formData.breadth);
+    formDataToSend.append("height", formData.height);
+    formDataToSend.append("quantity", formData.quantity);
+
+    formData.media.forEach((file) => {
+      formDataToSend.append("media", file);
+    });
+
+    try {
+      const token = localStorage.getItem("token"); // Assuming you store the token in localStorage
+      const response = await axios.post("/api/products", formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Product added successfully!", {
+        position: "bottom-right",
+      });
+      navigate("/products");
+    } catch (error) {
+      console.error("Error adding product:", error);
+      toast.error(error.response?.data?.message || "Failed to add product.", {
+        position: "bottom-right",
+      });
+    }
   };
 
   return (
@@ -106,7 +138,7 @@ const AddProduct = () => {
           <label>Media</label>
           <div className="media-upload">
             <input
-              ref={fileInputRef} // Add the ref
+              ref={fileInputRef}
               type="file"
               name="media"
               accept="png,jpg,jpeg"
@@ -135,23 +167,10 @@ const AddProduct = () => {
         </div>
         <div className="form-group">
           <label>Status</label>
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-          >
+          <select name="status" value={formData.status} onChange={handleChange}>
             <option value="draft">Draft</option>
             <option value="active">Active</option>
           </select>
-        </div>
-        <div className="form-group">
-          <label>Collection</label>
-          <input
-            type="text"
-            name="collection"
-            value={formData.collection}
-            onChange={handleChange}
-          />
         </div>
 
         <div className="form-group">
@@ -164,20 +183,62 @@ const AddProduct = () => {
             onChange={handleChange}
           />
         </div>
+
+        <div className="form-group">
+          <label>Length</label>
+          <input
+            type="number"
+            name="length"
+            placeholder="cm"
+            value={formData.length}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>Breadth</label>
+          <input
+            type="number"
+            name="breadth"
+            placeholder="cm"
+            value={formData.breadth}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>Height</label>
+          <input
+            type="number"
+            name="height"
+            placeholder="cm"
+            value={formData.height}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>Quantity</label>
+          <input
+            type="number"
+            name="quantity"
+            placeholder="quantity"
+            value={formData.quantity}
+            onChange={handleChange}
+          />
+        </div>
         <div className="form-group ">
           <label>Pricing</label>
           <div className="pricing">
             <input
-              type="text"
+              type="number"
               name="price"
               value={formData.price}
               placeholder="price"
               onChange={handleChange}
             />
             <input
-              name="compareAtPrice"
+              type="number"
+              name="comparePrice"
               placeholder="compare-at price"
-              value={formData.compareAtPrice}
+              value={formData.comparePrice}
               onChange={handleChange}
             />
           </div>
