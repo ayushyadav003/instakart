@@ -4,5 +4,5 @@ export const productTableHead = [
   'Product Image',
   'Description',
   'Price',
-  'SKU',
+  'Delete',
 ]

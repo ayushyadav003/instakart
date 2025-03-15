@@ -29,15 +29,20 @@
 
 .form-group {
   display: flex;
-  margin-bottom: 5%;
+  margin-bottom: 8%;
   flex-direction: column;
   align-items: baseline;
+  gap:12px;
+
+  .pricing-contianer{
+    display: flex;
+    gap: 10px;
+  }
 }
 
 .form-group label {
   text-align: left;
   display: block;
-  margin-bottom: 2%;
 }
 
 .form-group input,

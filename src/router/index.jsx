@@ -84,6 +84,15 @@ export default function Router() {
             </DashboardLayout>
           }
         />
+        
+        <Route
+          path="/product/:productId"
+          element={
+            <DashboardLayout>
+              <AddProduct />
+            </DashboardLayout>
+          }
+        />
         <Route
           path="/themes"
           element={
