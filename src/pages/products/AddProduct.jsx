@@ -1,13 +1,16 @@
-import React, { useState, useRef } from "react";
-import "./AddProduct.scss";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import "./AddProduct.scss";
 
 const AddProduct = () => {
   const navigate = useNavigate();
+  const { productId } = useParams();
+  const fileInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -20,24 +23,45 @@ const AddProduct = () => {
     breadth: "",
     height: "",
     quantity: 0,
-    // Add other fields from your schema if needed
   });
 
-  const fileInputRef = useRef(null);
+  const [originalData, setOriginalData] = useState(null);
+
+  // Fetch product data if updating
+  useEffect(() => {
+    if (productId) {
+      axios
+        .get(`http://localhost:5000/api/v1/products/${productId}`)
+        .then((response) => {
+          const product = response.data;
+
+          // Ensure media URLs are handled separately
+          setFormData({
+            title: product.title || "",
+            description: product.description || "",
+            status: product.status || "draft",
+            price: product.price || "",
+            comparePrice: product.comparePrice || "",
+            media: product.mediaUrls || [], // Use mediaUrls from API
+            weight: product.weight || "",
+            length: product.length || "",
+            breadth: product.breadth || "",
+            height: product.height || "",
+            quantity: product.quantity || 0,
+          });
+
+          setOriginalData(product);
+        })
+        .catch((error) => console.error("Error fetching product:", error));
+    }
+  }, [productId]);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    if (type === "file") {
-      setFormData((prevData) => ({
-        ...prevData,
-        media: [...files],
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "file" ? [...files] : value,
+    }));
   };
 
   const removeMedia = (index) => {
@@ -45,9 +69,7 @@ const AddProduct = () => {
       ...prevData,
       media: prevData.media.filter((_, i) => i !== index),
     }));
-    if (fileInputRef.current) {
-      fileInputRef.current.value = null;
-    }
+    if (fileInputRef.current) fileInputRef.current.value = null;
   };
 
   const handleSubmit = async (e) => {
@@ -70,39 +92,54 @@ const AddProduct = () => {
       return;
     }
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("title", formData.title);
-    formDataToSend.append("description", formData.description);
-    formDataToSend.append("price", formData.price);
-    formDataToSend.append("comparePrice", formData.comparePrice);
-    formDataToSend.append("status", formData.status);
-    formDataToSend.append("weight", formData.weight);
-    formDataToSend.append("length", formData.length);
-    formDataToSend.append("breadth", formData.breadth);
-    formDataToSend.append("height", formData.height);
-    formDataToSend.append("quantity", formData.quantity);
-
-    formData.media.forEach((file) => {
-      formDataToSend.append("media", file);
-    });
-
     try {
-      const token = localStorage.getItem("token"); // Assuming you store the token in localStorage
-      const response = await axios.post("/api/products", formDataToSend, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      toast.success("Product added successfully!", {
-        position: "bottom-right",
-      });
+      // Separate existing images from new files
+      const existingMediaUrls = formData.media.filter(
+        (item) => typeof item === "string"
+      );
+      const newFiles = formData.media.filter(
+        (item) => typeof item !== "string"
+      );
+
+      // Upload only new images
+      const uploadedMediaUrls = await Promise.all(
+        newFiles.map(async (file) => {
+          const uploadData = new FormData();
+          uploadData.append("file", file);
+          uploadData.append("upload_preset", "instakart");
+
+          const response = await axios.post(
+            "https://api.cloudinary.com/v1_1/dobzi0uvb/image/upload",
+            uploadData
+          );
+          return response.data.secure_url;
+        })
+      );
+
+      // Combine old and new media URLs
+      const mediaUrls = [...existingMediaUrls, ...uploadedMediaUrls];
+
+      const productData = { ...formData, media: mediaUrls };
+
+      if (productId) {
+        await axios.put(
+          `http://localhost:5000/api/v1/products/${productId}`,
+          productData
+        );
+        toast.success("Product updated successfully!", {
+          position: "bottom-right",
+        });
+      } else {
+        await axios.post("http://localhost:5000/api/v1/products", productData);
+        toast.success("Product added successfully!", {
+          position: "bottom-right",
+        });
+      }
+
       navigate("/products");
     } catch (error) {
-      console.error("Error adding product:", error);
-      toast.error(error.response?.data?.message || "Failed to add product.", {
-        position: "bottom-right",
-      });
+      console.error("Error submitting form:", error);
+      toast.error("Operation failed.", { position: "bottom-right" });
     }
   };
 
@@ -113,7 +150,9 @@ const AddProduct = () => {
         <Link to="/products">
           <ArrowBackIcon />
         </Link>
-        <h2 className="header">Add Product</h2>
+        <h2 className="header">
+          {productId ? "Update Product" : "Add Product"}
+        </h2>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -136,21 +175,21 @@ const AddProduct = () => {
         </div>
         <div className="form-group">
           <label>Media</label>
-          <div className="media-upload">
-            <input
-              ref={fileInputRef}
-              type="file"
-              name="media"
-              accept="png,jpg,jpeg"
-              multiple
-              onChange={handleChange}
-            />
-          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            name="media"
+            accept="png,jpg,jpeg"
+            multiple
+            onChange={handleChange}
+          />
           <div className="media-preview">
             {formData.media.map((file, index) => (
               <div key={index} className="media-preview-item">
                 <img
-                  src={URL.createObjectURL(file)}
+                  src={
+                    typeof file === "string" ? file : URL.createObjectURL(file)
+                  }
                   alt={`preview-${index}`}
                   className="preview-image"
                 />
@@ -172,44 +211,35 @@ const AddProduct = () => {
             <option value="active">Active</option>
           </select>
         </div>
-
         <div className="form-group">
-          <label>Weight</label>
+          <label>Weight (gms)</label>
           <input
             type="number"
             name="weight"
-            placeholder="gms"
             value={formData.weight}
             onChange={handleChange}
           />
         </div>
-
         <div className="form-group">
-          <label>Length</label>
+          <label>Dimensions (cm)</label>
           <input
             type="number"
             name="length"
-            placeholder="cm"
+            placeholder="Length"
             value={formData.length}
             onChange={handleChange}
           />
-        </div>
-        <div className="form-group">
-          <label>Breadth</label>
           <input
             type="number"
             name="breadth"
-            placeholder="cm"
+            placeholder="Breadth"
             value={formData.breadth}
             onChange={handleChange}
           />
-        </div>
-        <div className="form-group">
-          <label>Height</label>
           <input
             type="number"
             name="height"
-            placeholder="cm"
+            placeholder="Height"
             value={formData.height}
             onChange={handleChange}
           />
@@ -219,35 +249,32 @@ const AddProduct = () => {
           <input
             type="number"
             name="quantity"
-            placeholder="quantity"
             value={formData.quantity}
             onChange={handleChange}
           />
         </div>
-        <div className="form-group ">
+        <div className="form-group">
           <label>Pricing</label>
-          <div className="pricing">
+          <div className="pricing-contianer">
             <input
               type="number"
               name="price"
               value={formData.price}
-              placeholder="price"
+              placeholder="Price"
               onChange={handleChange}
             />
             <input
               type="number"
               name="comparePrice"
-              placeholder="compare-at price"
+              placeholder="Compare-at price"
               value={formData.comparePrice}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="form-group">
-          <button type="submit" className="submit-button">
-            Add Product
-          </button>
-        </div>
+        <button type="submit" className="submit-button">
+          {productId ? "Update Product" : "Add Product"}
+        </button>
       </form>
     </div>
   );
