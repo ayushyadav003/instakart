@@ -37,7 +37,7 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
                           {row?.title}
                         </TableCell>
                         <TableCell component="th" scope="row">
-                          <img src={row.productImg} />
+                          <img src={row.image} />
                         </TableCell>
                         <TableCell component="th" scope="row">
                           {row?.description || '--'}
@@ -66,6 +66,7 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
                         </TableCell>
                       </>
                     )}
+                    
                   </TableRow>
                 )
               })}

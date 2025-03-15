@@ -10,7 +10,7 @@
   overflow-x: hidden;
   .sidebarShrinkBtn {
     height: 30px;
-    background-color: #fefefe;
+    // background-color: #fefefe;
     width: 90%;
     margin: auto;
     position: absolute;
@@ -29,11 +29,20 @@
   }
   .profileWrapper {
     display: flex;
-    padding: 5px 20px 0 20px;
+    padding: 20px;
     gap: 1rem;
     align-items: center;
-    border-top: 1px solid #fff;
-    border-bottom: 1px solid #fff;
+    font-size: 26px;
+    font-weight: bold;
+
+    & a {
+      transition: 0.2s ease-in-out;
+      color: black;
+      text-decoration: none;
+    }
+    & a:hover {
+      color: #d5aa35;
+    }
     .arrowWrapper {
       position: absolute;
       right: -10px;
@@ -74,7 +83,7 @@
     }
   }
   .optionWrapper {
-    padding: 30px 10px;
+    padding: 0px 10px;
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -89,8 +98,8 @@
       display: flex;
       align-items: center;
       padding: 9px 10px;
-      color: #fff;
-      gap: 1.5rem;
+      // color: black;
+      gap: 10px;
       border-radius: 8px;
       font-size: 0.8em;
       text-align: left;
@@ -103,7 +112,7 @@
 
     span,
     a:hover {
-      background: rgb(255 255 255 / 36%);
+      background: rgb(210 210 210 / 36%);
     }
   }
 }

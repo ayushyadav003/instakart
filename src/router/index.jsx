@@ -1,16 +1,17 @@
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
-import Login from '../pages/login/Login'
-import LoginLayout from '../layouts/LoginLayout'
-import DashboardLayout from '../layouts/DashboardLayout'
-import Signup from '../pages/login/Signup'
-import ForgetPassword from '../pages/login/ForgetPassword'
-import ResetPassword from '../pages/login/ResetPasswrod'
-import Dashboard from '../pages/dashboard/Dashboard'
-import Products from '../pages/products/Products'
 import ThemeListing from '../pages/themes/Themes'
 import CollectionPage from '../components/collection/Collections'
 import StoreLayout from '../layouts/store/StoreLayout'
 import ProductPage from '../components/productPage/ProductPage'
+import Login from "../pages/login/Login";
+import LoginLayout from "../layouts/LoginLayout";
+import DashboardLayout from "../layouts/DashboardLayout";
+import Signup from "../pages/login/Signup";
+import ForgetPassword from "../pages/login/ForgetPassword";
+import ResetPassword from "../pages/login/ResetPasswrod";
+import Dashboard from "../pages/dashboard/Dashboard";
+import ProductList from "../pages/products/ProductList";
+import AddProduct from "../pages/products/AddProduct";
 
 export default function Router() {
   return (
@@ -70,7 +71,16 @@ export default function Router() {
           path="/products"
           element={
             <DashboardLayout>
-              <Products />
+              <ProductList />
+            </DashboardLayout>
+          }
+        />
+
+        <Route
+          path="/add-product"
+          element={
+            <DashboardLayout>
+              <AddProduct />
             </DashboardLayout>
           }
         />
@@ -100,5 +110,5 @@ export default function Router() {
         />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
