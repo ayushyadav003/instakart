@@ -8,7 +8,44 @@ import { orderTableHead } from "../../utils/tableHead";
 export default function OrderList() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Date Formatting Function
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    if (isNaN(date)) return "Invalid Date";
+
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    console.log(`${day}/${month}/${year}`, "date");
+    return `${day}/${month}/${year}`;
+  };
+
+  // Fetch Orders
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/v1/orders");
+        const formattedOrders = response.data.map((order) => ({
+          ...order,
+          orderDate: formatDate(order.orderDate), // Assuming createdAt is the order date
+        }));
+        setOrders(formattedOrders);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        setError(
+          "Failed to load orders. Please check your network connection."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  // Delete Order
   const onDelete = async (rowItem) => {
     const confirmDelete = window.confirm(
       `Are you sure you want to delete order #${rowItem._id}?`
@@ -17,30 +54,18 @@ export default function OrderList() {
 
     try {
       await axios.delete(`http://localhost:5000/api/v1/orders/${rowItem._id}`);
-
       setOrders((prevOrders) =>
         prevOrders.filter((order) => order._id !== rowItem._id)
       );
+      alert("Order deleted successfully!");
     } catch (error) {
       console.error("Error deleting order:", error);
-      alert("Failed to delete the order. Please try again.");
+      setError("Failed to delete the order. Please try again.");
     }
   };
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/v1/orders");
-        setOrders(response?.data || []);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOrders();
-  }, []);
+  if (loading) return <p>Loading Orders...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="table-list">
@@ -50,16 +75,12 @@ export default function OrderList() {
           <button className="add-button">Add Order</button>
         </Link>
       </div>
-      {loading ? (
-        <p>Loading Orders...</p>
-      ) : (
-        <CommonTable
-          onDelete={onDelete}
-          head={orderTableHead}
-          rows={orders}
-          type="orders"
-        />
-      )}
+      <CommonTable
+        onDelete={onDelete}
+        head={orderTableHead}
+        rows={orders}
+        type="orders"
+      />
     </div>
   );
 }

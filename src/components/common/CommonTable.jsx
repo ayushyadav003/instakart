@@ -12,7 +12,7 @@ import "../styles/CommonTable.scss";
 
 function CommonTable({ rows, type, head, onEdit, onDelete }) {
   const navigate = useNavigate();
-
+  console.log(rows, "rowsorder");
   const renderRows = () => {
     return rows?.length > 0
       ? rows.map((row, i) => {
@@ -55,12 +55,17 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
 
             case "orders":
               return (
-                <TableRow key={row._id}>
+                <TableRow
+                  style={{ cursor: "pointer" }}
+                  key={row._id}
+                  onClick={() => navigate(`/orders/${row._id}`)}
+                >
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>{row.orderId}</TableCell>
-                  <TableCell>{row.customerName}</TableCell>
+                  <TableCell>{row.customer.firstName}</TableCell>
                   <TableCell>{row.orderDate}</TableCell>
-                  <TableCell>{row.totalAmount}</TableCell>
+                  <TableCell>{row.products.length}</TableCell>
+                  <TableCell>{row.paymentMethod}</TableCell>
                   <TableCell>
                     <div className="centerItem">
                       <span
@@ -103,7 +108,10 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
             default:
               return (
                 <TableRow key={row._id}>
-                  <TableCell colSpan={head.length} style={{ textAlign: "center" }}>
+                  <TableCell
+                    colSpan={head.length}
+                    style={{ textAlign: "center" }}
+                  >
                     No Data Available
                   </TableCell>
                 </TableRow>

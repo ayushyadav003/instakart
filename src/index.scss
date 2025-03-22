@@ -100,7 +100,6 @@ body {
     border-spacing: 0 8px; /* Add margin between rows */
     width: 100%; /* Make the table take full width */
   }
-
   th {
     max-width: 150px;
     white-space: nowrap;
@@ -113,9 +112,17 @@ body {
 
   td {
     text-align: center;
-    border-radius: 10px;
+    // border-radius: 10px;
     border: none;
     font-weight: normal;
     padding: 5px;
+  }
+
+  td:nth-child(1) {
+    border-radius: 10px 0 0 10px;
+  }
+
+  td:last-child {
+    border-radius: 0 10px 10px 0;
   }
 }

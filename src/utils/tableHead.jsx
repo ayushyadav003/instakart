@@ -14,5 +14,6 @@ export const orderTableHead = [
   'Customer',
   'Total',
   'Items',
-  'Delivery method'
+  'Delivery method',
+  'Delete'
 ]
