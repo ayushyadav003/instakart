@@ -6,3 +6,13 @@ export const productTableHead = [
   'Price',
   'Delete',
 ]
+
+
+export const orderTableHead = [
+  'S no.',
+  'OrderID',
+  'Customer',
+  'Total',
+  'Items',
+  'Delivery method'
+]
