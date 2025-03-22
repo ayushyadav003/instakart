@@ -18,6 +18,7 @@
     "axios": "^1.7.9",
     "chart.js": "^4.4.8",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "date-fns": "^4.1.0",
     "formik": "^2.4.6",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",

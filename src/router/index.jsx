@@ -78,6 +78,14 @@ export default function Router() {
           }
         />
         <Route
+          path="/orders/:orderId"
+          element={
+            <DashboardLayout>
+              <AddOrder />
+            </DashboardLayout>
+          }
+        />
+        <Route
           path="/add-order"
           element={
             <DashboardLayout>

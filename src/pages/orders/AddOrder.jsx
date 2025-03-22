@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../../components/styles/Order.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Delete } from "@mui/icons-material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const AddOrder = () => {
+  const { orderId } = useParams(); // Get orderId from route
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
@@ -15,6 +17,7 @@ const AddOrder = () => {
     subTotal: 0.0,
     totalDiscounts: 0.0,
     total: 0.0,
+    paymentMethod: "Cash on Delivery", // Default value
   });
   const searchRef = useRef(null);
   const containerRef = useRef(null);
@@ -29,6 +32,8 @@ const AddOrder = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false); // Track if it's an update
 
   const handleSearchProduct = async (inputSearchVal) => {
     setSearchTerm(inputSearchVal);
@@ -43,8 +48,8 @@ const AddOrder = () => {
         setSuggestions(searchResponse.data);
       } catch (error) {
         console.error("Error fetching products:", error);
-        toast.error("Failed to fetch products.", {
-          position: toast.POSITION.BOTTOM_RIGHT,
+        toast.error("Error fetching products. Please try again.", {
+          position: "bottom-right",
         });
       }
     } else {
@@ -96,26 +101,21 @@ const AddOrder = () => {
     const total = subTotal - totalDiscounts;
 
     setPaymentForm({
+      ...paymentForm,
       subTotal,
       totalDiscounts,
       total,
     });
   }, [orderItems]);
 
-  useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      e.preventDefault();
-      e.returnValue = "";
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, []);
-
   const handleCustomerChange = (e) => {
     const { name, value } = e.target;
     setCustomer((prev) => ({ ...prev, [name]: value }));
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+  };
+
+  const handlePaymentChange = (e) => {
+    setPaymentForm({ ...paymentForm, paymentMethod: e.target.value });
   };
 
   const validateForm = () => {
@@ -154,35 +154,89 @@ const AddOrder = () => {
     }
 
     setErrors(newErrors);
+
+    if (!isValid) {
+      // Display specific error messages using toast
+      if (newErrors.firstName) {
+        toast.error(newErrors.firstName, { position: "bottom-right" });
+      } else if (newErrors.lastName) {
+        toast.error(newErrors.lastName, { position: "bottom-right" });
+      } else if (newErrors.mobileNumber) {
+        toast.error(newErrors.mobileNumber, { position: "bottom-right" });
+      } else if (newErrors.email) {
+        toast.error(newErrors.email, { position: "bottom-right" });
+      } else if (newErrors.addressLine1) {
+        toast.error(newErrors.addressLine1, { position: "bottom-right" });
+      } else if (newErrors.pincode) {
+        toast.error(newErrors.pincode, { position: "bottom-right" });
+      }
+    }
     return isValid;
   };
 
   const handleCreateOrder = async () => {
     if (orderItems.length === 0) {
-      toast.error("Please add items to the order.", {
-        position: toast.POSITION.BOTTOM_RIGHT,
+      toast.error("Please add items to the order", {
+        position: "bottom-right",
       });
       return;
     }
-    if (validateForm()) {
-      try {
-        const customerResponse = await axios.post(
-          "http://localhost:5000/api/v1/customers",
-          customer
-        );
 
-        const productIds = orderItems.map((item) => item.id);
-        const orderResponse = await axios.post(
-          "http://localhost:5000/api/v1/orders",
+    if (validateForm()) {
+      setLoading(true);
+      try {
+        let customerResponse;
+
+        // Fetch customer by phone number
+        const phoneResponse = await axios.get(
+          `http://localhost:5000/api/v1/customers/getSingleCustomer`,
           {
-            customerDetails: customerResponse.data,
-            products: productIds,
-            payment: paymentForm,
+            params: { identifier: customer.mobileNumber },
           }
         );
 
-        toast.success("Order created successfully!");
-        console.log("Order created successfully:", orderResponse.data);
+        console.log(phoneResponse, "phoneResponse");
+
+        if (phoneResponse.data) {
+          console.log("Customer found:", phoneResponse.data);
+          customerResponse = await axios.put(
+            `http://localhost:5000/api/v1/customers/${phoneResponse.data._id}`,
+            customer
+          );
+        } else {
+          console.log("No existing customer found, creating a new one.");
+          customerResponse = await axios.post(
+            "http://localhost:5000/api/v1/customers",
+            customer
+          );
+        }
+
+        const productIds = orderItems.map((item) => item.id);
+        const orderData = {
+          customerDetails: customerResponse.data.customer,
+          products: productIds,
+          paymentMethod: paymentForm.paymentMethod,
+          totalAmount: paymentForm.total, // Ensure this is sent
+        };
+
+        let orderResponse;
+        if (orderId) {
+          orderResponse = await axios.put(
+            `http://localhost:5000/api/v1/orders/${orderId}`,
+            orderData
+          );
+          toast.success("Order updated successfully!", {
+            position: "bottom-right",
+          });
+        } else {
+          orderResponse = await axios.post(
+            "http://localhost:5000/api/v1/orders",
+            orderData
+          );
+          toast.success("Order created successfully!", {
+            position: "bottom-right",
+          });
+        }
 
         setOrderItems([]);
         setCustomer({
@@ -196,15 +250,86 @@ const AddOrder = () => {
         });
         setSearchTerm("");
         setSuggestions([]);
+        navigate("/orders");
       } catch (error) {
-   
-        toast.error(
-          "Failed to create order. Please check your data and try again."
-        );
-        console.error("Error creating order:", error);
+        console.error("Error creating or updating order:", error);
+        toast.error("Failed to create or update order. Please try again.", {
+          position: "bottom-right",
+        });
+      } finally {
+        setLoading(false);
       }
     }
   };
+
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      if (orderId) {
+        setIsUpdate(true);
+        setLoading(true);
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/api/v1/orders/${orderId}`
+          );
+          const order = response.data;
+          // console.log(order, "order");
+          // Assuming the API returns customer details nested as customerDetails
+          const {
+            customer: customerDetails,
+            products,
+            paymentMethod,
+            totalAmount,
+          } = order;
+
+          console.log(
+            customerDetails,
+            products,
+            paymentMethod,
+            totalAmount,
+            "bha"
+          );
+
+          // Populate customer form
+          setCustomer({
+            firstName: customerDetails.firstName || "",
+            lastName: customerDetails.lastName || "",
+            mobileNumber: customerDetails.mobileNumber || "",
+            email: customerDetails.email || "",
+            addressLine1: customerDetails.addressLine1 || "",
+            addressLine2: customerDetails.addressLine2 || "",
+            pincode: customerDetails.pincode || "",
+          });
+
+          // Populate order items.  Map product IDs to a simplified structure.
+          const fetchedOrderItems = products.map((product) => ({
+            id: product._id,
+            title: product.title,
+            img: product.mediaUrls[0], // Or however you want to get the image
+            price: product.price,
+            comparePrice: product.comparePrice,
+          }));
+          setOrderItems(fetchedOrderItems);
+
+          // Populate payment form
+          setPaymentForm({
+            ...paymentForm,
+            paymentMethod: paymentMethod || "Cash on Delivery", // Or default
+            total: totalAmount,
+          });
+          setSearchTerm("");
+          setSuggestions([]);
+        } catch (error) {
+          console.error("Error fetching order:", error);
+          toast.error("Failed to load order details.", {
+            position: "bottom-right",
+          });
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    fetchOrderDetails();
+  }, [orderId]);
 
   return (
     <div className="add-order-container">
@@ -212,9 +337,9 @@ const AddOrder = () => {
         <Link to="/orders">
           <ArrowBackIcon />
         </Link>
-        <h2 className="heading">Create Order</h2>
+        <h2 className="heading">{orderId ? "Update Order" : "Create Order"}</h2>
       </div>
-      <ToastContainer />
+      <ToastContainer limit={1} position="bottom-right" autoClose={3000} />
 
       <div className="section">
         <h3>Products</h3>
@@ -223,7 +348,7 @@ const AddOrder = () => {
             ref={searchRef}
             className="search-input"
             type="text"
-            placeholder="Search products"
+            placeholder="Search products *"
             value={searchTerm}
             onChange={(e) => handleSearchProduct(e.target.value)}
           />
@@ -304,14 +429,14 @@ const AddOrder = () => {
             <input
               type="text"
               name="firstName"
-              placeholder="First Name"
+              placeholder="First Name *"
               value={customer.firstName}
               onChange={handleCustomerChange}
             />
             <input
               type="text"
               name="lastName"
-              placeholder="Last Name"
+              placeholder="Last Name *"
               value={customer.lastName}
               onChange={handleCustomerChange}
             />
@@ -320,13 +445,11 @@ const AddOrder = () => {
             <input
               type="number"
               name="mobileNumber"
-              placeholder="Mobile Number"
+              placeholder="Mobile Number *"
               value={customer.mobileNumber}
               onChange={handleCustomerChange}
               onInput={(e) => {
-                // Remove any non-numeric characters
                 e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                // Truncate to 10 digits
                 if (e.target.value.length > 10) {
                   e.target.value = e.target.value.slice(0, 10);
                 }
@@ -336,7 +459,7 @@ const AddOrder = () => {
             <input
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder="Email *"
               value={customer.email}
               onChange={handleCustomerChange}
             />
@@ -346,38 +469,56 @@ const AddOrder = () => {
             <input
               type="text"
               name="addressLine1"
-              placeholder="Address Line 1"
+              placeholder="Address Line 1 *"
               value={customer.addressLine1}
               onChange={handleCustomerChange}
             />
             <input
               type="text"
               name="addressLine2"
-              placeholder="Address Line 2"
+              placeholder="Address Line 2 "
               value={customer.addressLine2}
               onChange={handleCustomerChange}
             />
           </div>
 
-          <input
-            type="number"
-            name="pincode"
-            placeholder="Pincode"
-            minLength={6}
-            maxLength={6}
-            value={customer.pincode}
-            onChange={handleCustomerChange}
-            onInput={(e) => {
-              if (e.target.value.length > 6) {
-                e.target.value = e.target.value.slice(0, 6);
-              }
-            }}
-          />
+          <div>
+            <input
+              type="number"
+              name="pincode"
+              placeholder="Pincode *"
+              minLength={6}
+              maxLength={6}
+              value={customer.pincode}
+              onChange={handleCustomerChange}
+              onInput={(e) => {
+                if (e.target.value.length > 6) {
+                  e.target.value = e.target.value.slice(0, 6);
+                }
+              }}
+            />
+            <select
+              name="paymentMethod"
+              value={paymentForm.paymentMethod}
+              onChange={handlePaymentChange}
+            >
+              <option value="Cash on Delivery">Cash on Delivery</option>
+              <option value="Online Payment">Online Payment</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <button className="create-order-button" onClick={handleCreateOrder}>
-        Create order
+      <button
+        className="create-order-button"
+        onClick={handleCreateOrder}
+        disabled={loading}
+      >
+        {loading
+          ? "Creating Order..."
+          : orderId
+          ? "Update Order"
+          : "Create order"}
       </button>
     </div>
   );
