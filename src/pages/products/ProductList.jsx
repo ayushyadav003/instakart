@@ -36,16 +36,16 @@ export default function ProductList() {
         const response = await axios.get(
           "http://localhost:5000/api/v1/products"
         );
-        console.log(response.data, "API Response");
+        console.log(response?.data, "API Response");
 
-        const formattedProducts = response.data.map((product) => ({
+        const formattedProducts = response?.data?.map((product) => ({
           ...product,
           image:
             product.mediaUrls?.length > 0
               ? product.mediaUrls[0]
               : "/assets/images/default.png",
         }));
-
+        
         setProducts(formattedProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -58,11 +58,11 @@ export default function ProductList() {
   }, []);
 
   return (
-    <div className="product-list">
+    <div className="table-list">
       <div className="header">
         <h2>Products</h2>
         <Link to="/add-product">
-          <button className="add-product">Add Product</button>
+          <button className="add-button">Add Product</button>
         </Link>
       </div>
 

@@ -116,10 +116,12 @@ const AddProduct = () => {
         })
       );
 
+      console.log("mediurls",uploadedMediaUrls);
+
       // Combine old and new media URLs
       const mediaUrls = [...existingMediaUrls, ...uploadedMediaUrls];
 
-      const productData = { ...formData, media: mediaUrls };
+      const productData = { ...formData,mediaUrls };
 
       if (productId) {
         await axios.put(
@@ -130,6 +132,7 @@ const AddProduct = () => {
           position: "bottom-right",
         });
       } else {
+        console.log('IN added')
         await axios.post("http://localhost:5000/api/v1/products", productData);
         toast.success("Product added successfully!", {
           position: "bottom-right",

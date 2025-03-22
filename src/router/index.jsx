@@ -1,8 +1,8 @@
-import { Routes, Route, BrowserRouter } from 'react-router-dom'
-import ThemeListing from '../pages/themes/Themes'
-import CollectionPage from '../components/collection/Collections'
-import StoreLayout from '../layouts/store/StoreLayout'
-import ProductPage from '../components/productPage/ProductPage'
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import ThemeListing from "../pages/themes/Themes";
+import CollectionPage from "../components/collection/Collections";
+import StoreLayout from "../layouts/store/StoreLayout";
+import ProductPage from "../components/productPage/ProductPage";
 import Login from "../pages/login/Login";
 import LoginLayout from "../layouts/LoginLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -12,6 +12,8 @@ import ResetPassword from "../pages/login/ResetPasswrod";
 import Dashboard from "../pages/dashboard/Dashboard";
 import ProductList from "../pages/products/ProductList";
 import AddProduct from "../pages/products/AddProduct";
+import OrderList from "../pages/orders/OrderList";
+import AddOrder from "../pages/orders/AddOrder";
 
 export default function Router() {
   return (
@@ -68,6 +70,22 @@ export default function Router() {
           }
         />
         <Route
+          path="/orders"
+          element={
+            <DashboardLayout>
+              <OrderList />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/add-order"
+          element={
+            <DashboardLayout>
+              <AddOrder />
+            </DashboardLayout>
+          }
+        />
+        <Route
           path="/products"
           element={
             <DashboardLayout>
@@ -84,7 +102,7 @@ export default function Router() {
             </DashboardLayout>
           }
         />
-        
+
         <Route
           path="/product/:productId"
           element={
