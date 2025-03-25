@@ -50,7 +50,7 @@ function DashboardLayout({ children }) {
       </div>
       <div className="dashboard">
         <div className="topHeader">
-          <div className="heading">
+        <div className="heading">
             {showBack && (
               <ArrowBackIos
                 sx={{ cursor: 'pointer' }}
@@ -60,14 +60,6 @@ function DashboardLayout({ children }) {
             <p>{heading || ''}</p>
           </div>
           <div>
-            <div className="walletBadge" onClick={() => navigate('/wallet')}>
-              <AccountBalanceWallet />
-              <p>
-                {localStorage.getItem('currentBalance')
-                  ? `Rs. ${walletAmount}`
-                  : '...'}
-              </p>
-            </div>
 
             <Badge badgeContent={1} color="secondary">
               <Notifications
@@ -76,7 +68,6 @@ function DashboardLayout({ children }) {
                 onClick={(e) => setAnchorElNotification(e.currentTarget)}
               />
             </Badge>
-
             <Popover
               id={popoverIdNotification}
               open={openNotification}

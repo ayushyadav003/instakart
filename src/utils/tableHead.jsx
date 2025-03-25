@@ -4,5 +4,16 @@ export const productTableHead = [
   'Product Image',
   'Description',
   'Price',
-  'SKU',
+  'Delete',
+]
+
+
+export const orderTableHead = [
+  'S no.',
+  'OrderID',
+  'Customer',
+  'Total',
+  'Items',
+  'Delivery method',
+  'Delete'
 ]

@@ -1,26 +1,26 @@
-import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { mobileBottomOptions, sideBarOption } from '../../utils/DashboardUtils'
-import { Tooltip } from '@mui/material'
-import './sidebar.scss'
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { mobileBottomOptions, sideBarOption } from "../../utils/DashboardUtils";
+import "./sidebar.scss";
 import {
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
-} from '@mui/icons-material'
+} from "@mui/icons-material";
+import { Tooltip } from "@mui/material";
 
 function Sidebar() {
-  const location = useLocation()
-  const [hide, setHide] = useState(false)
+  const location = useLocation();
+  const [hide, setHide] = useState(false);
 
   useEffect(() => {
-    if (!location.pathname.includes('/track-order')) {
-      localStorage.removeItem('track-order-filter')
+    if (!location.pathname.includes("/track-order")) {
+      localStorage.removeItem("track-order-filter");
     }
-  }, [location])
+  }, [location]);
 
   return (
     <>
-      <div className="sidebar-container" style={{ width: hide && '70px' }}>
+      <div className="sidebar-container" style={{ width: hide && "70px" }}>
         <div className="profileWrapper" height="50">
           <Tooltip title="My profile" placement="bottom-end">
             <Link to="/profile">
@@ -40,8 +40,8 @@ function Sidebar() {
               style={{
                 background:
                   option.link === location?.pathname &&
-                  'rgb(255 255 255 / 36%)',
-                width: hide && 'fit-content',
+                  "rgb(210 210 210 / 36%)",
+                width: hide && "fit-content",
               }}
             >
               {option?.icon}
@@ -66,7 +66,7 @@ function Sidebar() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default Sidebar
+export default Sidebar;

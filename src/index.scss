@@ -1,10 +1,15 @@
 // @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Kumbh+Sans:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap');
-body {
+@import url("https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap");
+
+* {
   padding: 0;
   margin: 0;
   // font-family: Kumbh Sans, sans-serif;
-  font-family: 'Epilogue', sans-serif;
+  font-family: "Epilogue", sans-serif;
+  box-sizing: border-box;
+}
+
+body {
   background-color: #f8f8f8;
 
   a {
@@ -36,11 +41,11 @@ body {
   }
 
   /* Firefox */
-  input[type='number'] {
+  input[type="number"] {
     -moz-appearance: textfield;
   }
   .optionsWrapper {
-    background-image: url('/images/dashboardbg.svg');
+    background-image: url("/images/dashboardbg.svg");
     height: 75px;
     // width: 100%;
     background-color: #fff;
@@ -95,7 +100,6 @@ body {
     border-spacing: 0 8px; /* Add margin between rows */
     width: 100%; /* Make the table take full width */
   }
-
   th {
     max-width: 150px;
     white-space: nowrap;
@@ -108,9 +112,17 @@ body {
 
   td {
     text-align: center;
-    border-radius: 10px;
+    // border-radius: 10px;
     border: none;
     font-weight: normal;
     padding: 5px;
+  }
+
+  td:nth-child(1) {
+    border-radius: 10px 0 0 10px;
+  }
+
+  td:last-child {
+    border-radius: 0 10px 10px 0;
   }
 }

@@ -26,9 +26,6 @@ const sampleProducts = [
 function ProductPage() {
   const { productId } = useParams()
 
-  // Fetch product data based on ID (for now using sample data)
-  const product = sampleProducts.find((p) => p.id === productId)
-
   if (!product) {
     return <h2>Product Not Found</h2>
   }
