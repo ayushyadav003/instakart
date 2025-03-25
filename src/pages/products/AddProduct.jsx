@@ -25,31 +25,29 @@ const AddProduct = () => {
     quantity: 0,
   });
 
+  const [productData, setProductData] = useState(null); // To store fetched product data
   const [originalData, setOriginalData] = useState(null);
 
-  // Fetch product data if updating
   useEffect(() => {
     if (productId) {
       axios
-        .get(`http://localhost:5000/api/v1/products/${productId}`)
+        .get(`/api/v1/products/${productId}`)
         .then((response) => {
           const product = response.data;
-
-          // Ensure media URLs are handled separately
+          setProductData(product); // Store the entire product data
           setFormData({
             title: product.title || "",
             description: product.description || "",
             status: product.status || "draft",
             price: product.price || "",
             comparePrice: product.comparePrice || "",
-            media: product.mediaUrls || [], // Use mediaUrls from API
+            media: product.mediaUrls || [],
             weight: product.weight || "",
             length: product.length || "",
             breadth: product.breadth || "",
             height: product.height || "",
             quantity: product.quantity || 0,
           });
-
           setOriginalData(product);
         })
         .catch((error) => console.error("Error fetching product:", error));
@@ -93,7 +91,6 @@ const AddProduct = () => {
     }
 
     try {
-      // Separate existing images from new files
       const existingMediaUrls = formData.media.filter(
         (item) => typeof item === "string"
       );
@@ -101,7 +98,6 @@ const AddProduct = () => {
         (item) => typeof item !== "string"
       );
 
-      // Upload only new images
       const uploadedMediaUrls = await Promise.all(
         newFiles.map(async (file) => {
           const uploadData = new FormData();
@@ -116,24 +112,19 @@ const AddProduct = () => {
         })
       );
 
-      console.log("mediurls",uploadedMediaUrls);
-
-      // Combine old and new media URLs
       const mediaUrls = [...existingMediaUrls, ...uploadedMediaUrls];
-
-      const productData = { ...formData,mediaUrls };
+      const productData = { ...formData, mediaUrls };
 
       if (productId) {
         await axios.put(
-          `http://localhost:5000/api/v1/products/${productId}`,
+          `/api/v1/products/${productId}`,
           productData
         );
         toast.success("Product updated successfully!", {
           position: "bottom-right",
         });
       } else {
-        console.log('IN added')
-        await axios.post("http://localhost:5000/api/v1/products", productData);
+        await axios.post("/api/v1/products", productData);
         toast.success("Product added successfully!", {
           position: "bottom-right",
         });
@@ -146,16 +137,15 @@ const AddProduct = () => {
     }
   };
 
+
   return (
     <div className="add-product-container">
-      <ToastContainer />
+      <ToastContainer limit={1} position="bottom-right" autoClose={3000} />
       <div className="header-container">
         <Link to="/products">
           <ArrowBackIcon />
         </Link>
-        <h2 className="header">
-          {productId ? "Update Product" : "Add Product"}
-        </h2>
+        <h2 className="header">{productId ? "Update Product" : "Add Product"}</h2>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -256,6 +246,34 @@ const AddProduct = () => {
             onChange={handleChange}
           />
         </div>
+
+        <div className="form-group">
+          <label>Variants</label>
+          {productData && productData.variants && productData.variants.length > 0 ? (
+            <div className="variants-table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Variant Title</th>
+                    <th>Variant Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productData.variants.map((variant) => (
+                    <tr key={variant._id}>
+                      <td>{variant.title}</td>
+                      <td>{variant.price}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+          <Link to={`/add-variant/${productId}`} className="variant-btn">
+            Add variants
+          </Link>
+        </div>
+
         <div className="form-group">
           <label>Pricing</label>
           <div className="pricing-contianer">
@@ -275,6 +293,7 @@ const AddProduct = () => {
             />
           </div>
         </div>
+
         <button type="submit" className="submit-button">
           {productId ? "Update Product" : "Add Product"}
         </button>
@@ -284,3 +303,4 @@ const AddProduct = () => {
 };
 
 export default AddProduct;
+

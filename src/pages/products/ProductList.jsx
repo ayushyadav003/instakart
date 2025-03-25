@@ -16,10 +16,8 @@ export default function ProductList() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(
-        `http://localhost:5000/api/v1/products/${rowItem._id}`
-      );
-      
+      await axios.delete(`/products/${rowItem._id}`);
+
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product._id !== rowItem._id)
       );
@@ -33,9 +31,7 @@ export default function ProductList() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/v1/products"
-        );
+        const response = await axios.get("/api/v1/products");
         console.log(response?.data, "API Response");
 
         const formattedProducts = response?.data?.map((product) => ({
@@ -45,7 +41,7 @@ export default function ProductList() {
               ? product.mediaUrls[0]
               : "/assets/images/default.png",
         }));
-        
+
         setProducts(formattedProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
