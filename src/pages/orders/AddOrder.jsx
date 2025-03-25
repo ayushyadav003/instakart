@@ -40,7 +40,7 @@ const AddOrder = () => {
     if (inputSearchVal !== "") {
       try {
         const searchResponse = await axios.get(
-          "http://localhost:5000/api/v1/products/search",
+          "/api/v1/products/search",
           {
             params: { q: inputSearchVal },
           }
@@ -189,7 +189,7 @@ const AddOrder = () => {
 
         // Fetch customer by phone number
         const phoneResponse = await axios.get(
-          `http://localhost:5000/api/v1/customers/getSingleCustomer`,
+          `/api/v1/customers/getSingleCustomer`,
           {
             params: { identifier: customer.mobileNumber },
           }
@@ -200,13 +200,13 @@ const AddOrder = () => {
         if (phoneResponse.data) {
           console.log("Customer found:", phoneResponse.data);
           customerResponse = await axios.put(
-            `http://localhost:5000/api/v1/customers/${phoneResponse.data._id}`,
+            `/api/v1/customers/${phoneResponse.data._id}`,
             customer
           );
         } else {
           console.log("No existing customer found, creating a new one.");
           customerResponse = await axios.post(
-            "http://localhost:5000/api/v1/customers",
+            "/api/v1/customers",
             customer
           );
         }
@@ -222,7 +222,7 @@ const AddOrder = () => {
         let orderResponse;
         if (orderId) {
           orderResponse = await axios.put(
-            `http://localhost:5000/api/v1/orders/${orderId}`,
+            `/api/v1/orders/${orderId}`,
             orderData
           );
           toast.success("Order updated successfully!", {
@@ -230,7 +230,7 @@ const AddOrder = () => {
           });
         } else {
           orderResponse = await axios.post(
-            "http://localhost:5000/api/v1/orders",
+            "/api/v1/orders",
             orderData
           );
           toast.success("Order created successfully!", {
@@ -269,7 +269,7 @@ const AddOrder = () => {
         setLoading(true);
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/v1/orders/${orderId}`
+            `/api/v1/orders/${orderId}`
           );
           const order = response.data;
           // console.log(order, "order");

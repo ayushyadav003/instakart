@@ -14,6 +14,7 @@ import ProductList from "../pages/products/ProductList";
 import AddProduct from "../pages/products/AddProduct";
 import OrderList from "../pages/orders/OrderList";
 import AddOrder from "../pages/orders/AddOrder";
+import AddVariant from "../pages/variants/AddVariant";
 
 export default function Router() {
   return (
@@ -110,7 +111,14 @@ export default function Router() {
             </DashboardLayout>
           }
         />
-
+        <Route
+          path="/add-variant/:productId"
+          element={
+            <DashboardLayout>
+              <AddVariant />
+            </DashboardLayout>
+          }
+        />
         <Route
           path="/product/:productId"
           element={

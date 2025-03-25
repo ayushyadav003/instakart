@@ -26,7 +26,7 @@ export default function OrderList() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/v1/orders");
+        const response = await axios.get("/api/v1/orders");
         const formattedOrders = response.data.map((order) => ({
           ...order,
           orderDate: formatDate(order.orderDate), // Assuming createdAt is the order date
@@ -53,7 +53,7 @@ export default function OrderList() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/v1/orders/${rowItem._id}`);
+      await axios.delete(`/api/v1/orders/${rowItem._id}`);
       setOrders((prevOrders) =>
         prevOrders.filter((order) => order._id !== rowItem._id)
       );
