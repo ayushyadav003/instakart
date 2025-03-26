@@ -120,6 +120,14 @@ export default function Router() {
           }
         />
         <Route
+          path="/variants/:productId/:variantId"
+          element={
+            <DashboardLayout>
+              <AddVariant />
+            </DashboardLayout>
+          }
+        />
+        <Route
           path="/product/:productId"
           element={
             <DashboardLayout>
