@@ -5,6 +5,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "./AddProduct.scss";
+import CommonTable from "../../components/common/CommonTable";
+import { variantTableHead } from "../../utils/tableHead";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -23,10 +25,13 @@ const AddProduct = () => {
     breadth: "",
     height: "",
     quantity: 0,
+    categories: [],
   });
 
-  const [productData, setProductData] = useState(null); // To store fetched product data
+  const [categoryInput, setCategoryInput] = useState("");
+  const [productData, setProductData] = useState(null);
   const [originalData, setOriginalData] = useState(null);
+  const [refreshVariants, setRefreshVariants] = useState(false); // Added state
 
   useEffect(() => {
     if (productId) {
@@ -34,7 +39,7 @@ const AddProduct = () => {
         .get(`/api/v1/products/${productId}`)
         .then((response) => {
           const product = response.data;
-          setProductData(product); // Store the entire product data
+          setProductData(product);
           setFormData({
             title: product.title || "",
             description: product.description || "",
@@ -47,18 +52,43 @@ const AddProduct = () => {
             breadth: product.breadth || "",
             height: product.height || "",
             quantity: product.quantity || 0,
+            categories: product.categories || [],
           });
           setOriginalData(product);
         })
         .catch((error) => console.error("Error fetching product:", error));
     }
-  }, [productId]);
+  }, [productId, refreshVariants]); // Added refreshVariants to dependency array
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: type === "file" ? [...files] : value,
+    }));
+  };
+
+  const handleCategoryChange = (e) => {
+    setCategoryInput(e.target.value);
+  };
+
+  const handleCategoryAdd = () => {
+    if (
+      categoryInput.trim() &&
+      !formData.categories.includes(categoryInput.trim())
+    ) {
+      setFormData((prevData) => ({
+        ...prevData,
+        categories: [...prevData.categories, categoryInput.trim()],
+      }));
+      setCategoryInput("");
+    }
+  };
+
+  const handleCategoryRemove = (category) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      categories: prevData.categories.filter((c) => c !== category),
     }));
   };
 
@@ -116,10 +146,7 @@ const AddProduct = () => {
       const productData = { ...formData, mediaUrls };
 
       if (productId) {
-        await axios.put(
-          `/api/v1/products/${productId}`,
-          productData
-        );
+        await axios.put(`/api/v1/products/${productId}`, productData);
         toast.success("Product updated successfully!", {
           position: "bottom-right",
         });
@@ -137,6 +164,40 @@ const AddProduct = () => {
     }
   };
 
+  const handleDeleteVariant = async (variantIdToDelete) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete this variant?`
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`/api/v1/variants/${variantIdToDelete._id}`);
+
+      // Update productData.variants to reflect the deletion and trigger re-render
+      setProductData((prevProductData) => {
+        if (!prevProductData || !prevProductData.variants)
+          return { ...prevProductData };
+
+        const updatedVariants = prevProductData.variants.filter(
+          (variant) => variant._id !== variantIdToDelete
+        );
+        return { ...prevProductData, variants: updatedVariants };
+      });
+
+      // Also update the product on the server to remove variant ID from variants array.
+      await axios.put(`/api/v1/products/${productId}`, {
+        variants: productData?.variants?.filter(
+          (v) => v._id !== variantIdToDelete
+        ), //send only the IDs
+      });
+
+      toast.success("Variant deleted successfully!");
+      setRefreshVariants((prev) => !prev); // Trigger re-fetch of product data
+    } catch (error) {
+      console.error("Error deleting variant:", error);
+      toast.error("Failed to delete variant.");
+    }
+  };
 
   return (
     <div className="add-product-container">
@@ -145,7 +206,9 @@ const AddProduct = () => {
         <Link to="/products">
           <ArrowBackIcon />
         </Link>
-        <h2 className="header">{productId ? "Update Product" : "Add Product"}</h2>
+        <h2 className="header">
+          {productId ? "Update Product" : "Add Product"}
+        </h2>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -246,27 +309,50 @@ const AddProduct = () => {
             onChange={handleChange}
           />
         </div>
+        <div className="form-group">
+          <label>Category</label>
+          <div className="category-input-container">
+            <input
+              type="text"
+              value={categoryInput}
+              onChange={handleCategoryChange}
+              placeholder="Enter category name"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleCategoryAdd();
+                }
+              }}
+            />
+          </div>
+          <div className="category-tags-container">
+            {formData.categories.map((category) => (
+              <div key={category} className="category-tag">
+                <span>{category}</span>
+                <button
+                  type="button"
+                  onClick={() => handleCategoryRemove(category)}
+                >
+                  ❌
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <div className="form-group">
           <label>Variants</label>
-          {productData && productData.variants && productData.variants.length > 0 ? (
+
+          {productData &&
+          productData.variants &&
+          productData.variants.length > 0 ? (
             <div className="variants-table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Variant Title</th>
-                    <th>Variant Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {productData.variants.map((variant) => (
-                    <tr key={variant._id}>
-                      <td>{variant.title}</td>
-                      <td>{variant.price}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <CommonTable
+                head={variantTableHead}
+                rows={productData.variants}
+                type="variants"
+                onDelete={handleDeleteVariant}
+              />
             </div>
           ) : null}
           <Link to={`/add-variant/${productId}`} className="variant-btn">
@@ -303,4 +389,3 @@ const AddProduct = () => {
 };
 
 export default AddProduct;
-
