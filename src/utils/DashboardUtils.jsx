@@ -27,6 +27,12 @@ export const sideBarOption = [
     icon: <SellIcon fontSize="small" />,
     link: "/orders",
   },
+  { title: 'My Collection', icon: <DragIndicator />, link: '/themes' },
+  { title: 'Invoice', icon: <Description />, link: '/invoice' },
+  { title: 'FAQ', icon: <Quiz />, link: '/faq' },
+  { title: 'Support', icon: <Call />, link: '/support' },
+]
+
   { title: "Themes", icon: <DragIndicator />, link: "/themes" },
   { title: "Analytics", icon: <Description />, link: "/analytics" },
   { title: "FAQ", icon: <Quiz />, link: "/faq" },

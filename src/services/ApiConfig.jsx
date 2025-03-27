@@ -1,5 +1,5 @@
 // const apiUrl = 'https://instakart-backend.onrender.com/api'
-const apiUrl = 'http://localhost:5000'
+const apiUrl = 'http://localhost:5000/api'
 
 export const apiConfig = {
   //auth
@@ -7,5 +7,5 @@ export const apiConfig = {
   login: `${apiUrl}/v1/auth/login`,
 
   //products
-  getProductList: `${apiUrl}/v1/auth/products`,
+  getProductList: `${apiUrl}/v1/products`,
 }

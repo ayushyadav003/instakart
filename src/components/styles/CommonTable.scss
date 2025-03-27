@@ -1,0 +1,34 @@
+table {
+  //   padding: 5px;
+  table {
+    border-collapse: separate;
+    border-spacing: 0 5px;
+    width: 100%;
+  }
+  th {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    text-align: center;
+    // border: none;
+    // padding: 5px;
+    img{
+        width: 40px;
+        object-fit: contain;
+        border-radius: 4px;
+    }
+  }
+
+  td {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: none;
+    padding: 5px;
+    font-weight: normal;
+  }
+}

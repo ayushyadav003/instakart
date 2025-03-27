@@ -24,20 +24,19 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
                   style={{ cursor: "pointer" }}
                   onClick={() => navigate(`/product/${row._id}`)}
                 >
-                  <TableCell>{i + 1}</TableCell>
-                  <TableCell style={{ textTransform: "capitalize" }}>
+                  <TableCell component="th">{i + 1}</TableCell>
+                  <TableCell component="th" style={{ textTransform: "capitalize" }}>
                     {row?.title}
                   </TableCell>
-                  <TableCell>
+                  <TableCell component="th">
                     <img
-                      style={{ maxWidth: "100%", width: "80px" }}
                       src={row.image}
                       alt="Product"
                     />
                   </TableCell>
-                  <TableCell>{row?.description || "--"}</TableCell>
+                  <TableCell component="th">{row?.description || "--"}</TableCell>
                   <TableCell>₹{row?.price}</TableCell>
-                  <TableCell>
+                  <TableCell component="th">
                     <div className="centerItem">
                       <span
                         className="removeBtn btn"
@@ -60,13 +59,13 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
                   key={row._id}
                   onClick={() => navigate(`/orders/${row._id}`)}
                 >
-                  <TableCell>{i + 1}</TableCell>
-                  <TableCell>{row.orderId}</TableCell>
-                  <TableCell>{row.customer.firstName}</TableCell>
-                  <TableCell>{row.orderDate}</TableCell>
-                  <TableCell>{row.products.length}</TableCell>
-                  <TableCell>{row.paymentMethod}</TableCell>
-                  <TableCell>
+                  <TableCell component="th">{i + 1}</TableCell>
+                  <TableCell component="th">{row.orderId}</TableCell>
+                  <TableCell component="th">{row.customer.firstName}</TableCell>
+                  <TableCell component="th">{row.orderDate}</TableCell>
+                  <TableCell component="th">{row.products.length}</TableCell>
+                  <TableCell component="th">{row.paymentMethod}</TableCell>
+                  <TableCell component="th">
                     <div className="centerItem">
                       <span
                         className="removeBtn btn"
@@ -122,11 +121,11 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
             case "users":
               return (
                 <TableRow key={row._id}>
-                  <TableCell>{i + 1}</TableCell>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.email}</TableCell>
+                  <TableCell component="th">{i + 1}</TableCell>
+                  <TableCell component="th">{row.name}</TableCell>
+                  <TableCell component="th">{row.email}</TableCell>
                   <TableCell>{row.role}</TableCell>
-                  <TableCell>
+                  <TableCell component="th">
                     <div className="centerItem">
                       <span
                         className="removeBtn btn"
