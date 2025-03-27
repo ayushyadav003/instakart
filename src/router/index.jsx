@@ -15,6 +15,7 @@ import AddProduct from "../pages/products/AddProduct";
 import OrderList from "../pages/orders/OrderList";
 import AddOrder from "../pages/orders/AddOrder";
 import AddVariant from "../pages/variants/AddVariant";
+import Analytics from "../pages/analytics/Analytics";
 
 export default function Router() {
   return (
@@ -140,6 +141,14 @@ export default function Router() {
           element={
             <DashboardLayout>
               <ThemeListing />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/analytics"
+          element={
+            <DashboardLayout>
+              <Analytics />
             </DashboardLayout>
           }
         />
