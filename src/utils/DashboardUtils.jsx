@@ -27,23 +27,12 @@ export const sideBarOption = [
     icon: <SellIcon fontSize="small" />,
     link: "/orders",
   },
-  { title: 'Themes', icon: <DragIndicator />, link: '/themes' },
+  { title: 'My Collection', icon: <DragIndicator />, link: '/themes' },
   { title: 'Invoice', icon: <Description />, link: '/invoice' },
   { title: 'FAQ', icon: <Quiz />, link: '/faq' },
   { title: 'Support', icon: <Call />, link: '/support' },
 ]
-  // {
-  //   title: "Invoice",
-  //   icon: <Description fontSize="small" />,
-  //   link: "/invoice",
-  // },
-  // { title: "FAQ", icon: <Quiz fontSize="small" />, link: "/faq" },
-  // {
-  //   title: "Support",
-  //   icon: <SupportAgentIcon fontSize="small" />,
-  //   link: "/support",
-  // },
-// ];
+
 export const mobileBottomOptions = [
   {
     title: "Dashboard",

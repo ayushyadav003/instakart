@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import './ProductPage.scss'
+import { startLoading, stopLoading } from '../../../redux/features/userSlice'
+import { apiConfig } from '../../../services/ApiConfig'
+import { ApiWithToken } from '../../../services/ApiWithToken'
+import { useDispatch } from 'react-redux'
 
 const sampleProducts = [
   {
@@ -25,9 +29,37 @@ const sampleProducts = [
 
 function ProductPage() {
   const { productId } = useParams()
+  const dispatch = useDispatch()
+
+  const [productData, setProductData] = useState({})
 
   // Fetch product data based on ID (for now using sample data)
   const product = sampleProducts.find((p) => p.id === productId)
+
+  const getProduct = async () => {
+    try {
+      dispatch(startLoading())
+      const apiOptions = {
+        url: apiConfig.product,
+        method: 'GET',
+        params: {
+          productId: productId,
+        },
+      }
+      const response = await ApiWithToken(apiOptions)
+      if (response?.status === 200) {
+        setProductData(response?.data?.data)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      dispatch(stopLoading())
+    }
+  }
+
+  useEffect(() => {
+    getProduct()
+  }, [productId])
 
   if (!product) {
     return <h2>Product Not Found</h2>

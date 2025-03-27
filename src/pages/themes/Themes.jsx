@@ -5,17 +5,7 @@ const themes = [
     image: 'https://via.placeholder.com/200',
     themeId: 'theme1',
   },
-  {
-    storeId: 'store2',
-    image: 'https://via.placeholder.com/200',
-    themeId: 'theme2',
-  },
-  {
-    storeId: 'store3',
-    image: 'https://via.placeholder.com/200',
-    themeId: 'theme3',
-  },
-]
+ ]
 
 const ThemeListing = () => {
   return (

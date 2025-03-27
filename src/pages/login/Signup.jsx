@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import { Button, InputAdornment, TextField } from '@mui/material'
 import * as Yup from 'yup'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
@@ -11,6 +10,7 @@ import axios from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { useDispatch } from 'react-redux'
 import { startLoading, stopLoading } from '../../redux/features/userSlice'
+import toast from 'react-hot-toast'
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false)
@@ -23,10 +23,10 @@ export default function Signup() {
   }
 
   const validateSchema = Yup.object().shape({
-    firstName: Yup.string()
+    fullName: Yup.string()
       .required('This field is required')
       .matches(/^[a-zA-Z ]+$/, 'Only alphabetic characters are allowed'),
-    lastName: Yup.string()
+    businessName: Yup.string()
       .required('This field is required')
       .matches(/^[a-zA-Z ]+$/, 'Only alphabetic characters are allowed'),
     email: Yup.string()
@@ -51,8 +51,8 @@ export default function Signup() {
       mobileNumber: null,
       password: '',
       confirmPassword: '',
-      firstName: '',
-      lastName: '',
+      fullName: '',
+      businessName: '',
       roles: ['admin'],
     },
     validationSchema: validateSchema,
@@ -72,16 +72,12 @@ export default function Signup() {
         url: apiConfig.signup,
         method: 'POST',
         data: updatedValues,
-        params: { refKey: localStorage.getItem('refKey') == 1 ? true : false },
+        // params: { refKey: localStorage.getItem('refKey') == 1 ? true : false },
       }
 
       const response = await axios(apiOptions)
-      if (response?.status === 200) {
-        toast.success(
-          response?.message ||
-            response?.data?.message ||
-            'User created Successfully',
-        )
+      if (response?.status === 201) {
+        toast.success(response?.message || 'User created Successfully')
         navigate('/')
       } else {
         toast.error(response?.message)
@@ -105,12 +101,12 @@ export default function Signup() {
         <h2>Signup with InstaKart!</h2>
         <div className="inner">
           <TextField
-            placeholder="First Name"
+            placeholder="Full Name"
             fullWidth
             margin="normal"
-            name="firstName"
+            name="fullName"
             onChange={formik.handleChange}
-            value={formik.values.firstName}
+            value={formik.values.fullName}
             sx={{
               '& .MuiOutlinedInput-root': {
                 fontSize: '14px',
@@ -120,15 +116,15 @@ export default function Signup() {
               },
             }}
             onBlur={formik.handleBlur}
-            error={Boolean(formik.touched.firstName && formik.errors.firstName)}
-            helperText={formik.touched.firstName ? formik.errors.firstName : ''}
+            error={Boolean(formik.touched.fullName && formik.errors.fullName)}
+            helperText={formik.touched.fullName ? formik.errors.fullName : ''}
           />
 
           <TextField
-            placeholder="Last Name"
+            placeholder="Business Name"
             fullWidth
             margin="normal"
-            name="lastName"
+            name="businessName"
             sx={{
               '& .MuiOutlinedInput-root': {
                 fontSize: '14px',
@@ -139,9 +135,13 @@ export default function Signup() {
             }}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values.lastName}
-            error={Boolean(formik.touched.lastName && formik.errors.lastName)}
-            helperText={formik.touched.lastName ? formik.errors.lastName : ''}
+            value={formik.values.businessName}
+            error={Boolean(
+              formik.touched.businessName && formik.errors.businessName,
+            )}
+            helperText={
+              formik.touched.businessName ? formik.errors.businessName : ''
+            }
           />
         </div>
         <div className="inner">
@@ -269,15 +269,15 @@ export default function Signup() {
         {/* <div>
           <Checkbox defaultChecked />
         </div> */}
-        <ReCAPTCHA
+        {/* <ReCAPTCHA
           sitekey="6LdPgK8qAAAAAGrfcqCBochAu_zGbR-vT3theN7Y"
           onChange={(val) => setReCapVal(val)}
-        />
+        /> */}
 
         <div className="remember" style={{ margin: '1rem 0 0 0' }}>
           <Button
             variant="contained"
-            disabled={!reCapVal}
+            // disabled={!reCapVal}
             type="submit"
             className="loginBtn"
           >

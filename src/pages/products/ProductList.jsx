@@ -1,57 +1,68 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
-import CommonTable from "../../components/common/CommonTable";
-import { productTableHead } from "../../utils/tableHead";
-import "./ProductList.scss";
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import { Link } from 'react-router-dom'
+import CommonTable from '../../components/common/CommonTable'
+import { productTableHead } from '../../utils/tableHead'
+import './ProductList.scss'
+import { startLoading, stopLoading } from '../../redux/features/userSlice'
+import { ApiWithToken } from '../../services/ApiWithToken'
+import { apiConfig } from '../../services/ApiConfig'
+import { useDispatch } from 'react-redux'
 
 export default function ProductList() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const dispatch = useDispatch()
 
   const onDelete = async (rowItem) => {
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete "${rowItem.title}"?`
-    );
-    if (!confirmDelete) return;
+      `Are you sure you want to delete "${rowItem.title}"?`,
+    )
+    if (!confirmDelete) return
 
     try {
-      await axios.delete(`/products/${rowItem._id}`);
+      await axios.delete(`/products/${rowItem._id}`)
 
       setProducts((prevProducts) =>
-        prevProducts.filter((product) => product._id !== rowItem._id)
-      );
+        prevProducts.filter((product) => product._id !== rowItem._id),
+      )
     } catch (error) {
-      console.error("Error deleting product:", error);
-      alert("Failed to delete the product. Please try again.");
+      console.error('Error deleting product:', error)
+      alert('Failed to delete the product. Please try again.')
     }
-  };
+  }
 
   // Fetch Products from API
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("/api/v1/products");
-        console.log(response?.data, "API Response");
-
+  const fetchProducts = async () => {
+    try {
+      dispatch(startLoading())
+      const apiOptions = {
+        url: apiConfig.getProductList,
+        method: 'POST',
+ 
+      }
+      const response = await ApiWithToken(apiOptions)
+      if (response?.status === 200) {
         const formattedProducts = response?.data?.map((product) => ({
           ...product,
           image:
             product.mediaUrls?.length > 0
               ? product.mediaUrls[0]
-              : "/assets/images/default.png",
-        }));
+              : '/assets/images/default.png',
+        }))
 
-        setProducts(formattedProducts);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
+        setProducts(formattedProducts)
       }
-    };
+    } catch (error) {
+      console.log(error)
+    } finally {
+      dispatch(stopLoading())
+    }
+  }
 
-    fetchProducts();
-  }, []);
+  useEffect(() => {
+    fetchProducts()
+  }, [])
 
   return (
     <div className="table-list">
@@ -62,16 +73,12 @@ export default function ProductList() {
         </Link>
       </div>
 
-      {loading ? (
-        <p>Loading products...</p>
-      ) : (
-        <CommonTable
-          onDelete={onDelete}
-          head={productTableHead}
-          rows={products}
-          type="products"
-        />
-      )}
+      <CommonTable
+        onDelete={onDelete}
+        head={productTableHead}
+        rows={products}
+        type="products"
+      />
     </div>
-  );
+  )
 }

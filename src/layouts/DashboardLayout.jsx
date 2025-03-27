@@ -14,13 +14,9 @@ import Sidebar from '../components/sidebar/Sidebar'
 
 function DashboardLayout({ children }) {
   const navigate = useNavigate()
-  const [openLogoutPopup, setOpenLogoutPopup] = useState(false)
   const [showBack, setShowBack] = useState(false)
   const [walletAmount, setWalletAmount] = useState(0)
   const userData = JSON.parse(localStorage.getItem('instakart-user-details'))
-  const firstName = userData?.firstName || ''
-  const lastName = userData?.firstName || ''
-  const email = userData?.firstName || ''
   // const userID = localStorage.getItem("accountUserId");
 
   const { heading } = useSelector(({ current }) => current)
@@ -50,7 +46,7 @@ function DashboardLayout({ children }) {
       </div>
       <div className="dashboard">
         <div className="topHeader">
-        <div className="heading">
+          <div className="heading">
             {showBack && (
               <ArrowBackIos
                 sx={{ cursor: 'pointer' }}
@@ -60,7 +56,6 @@ function DashboardLayout({ children }) {
             <p>{heading || ''}</p>
           </div>
           <div>
-
             <Badge badgeContent={1} color="secondary">
               <Notifications
                 id={popoverIdNotification}
@@ -93,7 +88,7 @@ function DashboardLayout({ children }) {
               </div>
             </Popover>
             <span id={popoverId} className="profileDp" onClick={handleOpen}>
-              {firstName && firstName[0]}
+              {userData?.fullName}
             </span>
           </div>
           <Popover
@@ -114,20 +109,23 @@ function DashboardLayout({ children }) {
                   onClick={handleOpen}
                   style={{ borderRadius: '5px', margin: '0' }}
                 >
-                  {firstName && firstName[0]}
+                  {userData?.fullName && userData?.fullName[0]}
                 </span>
                 <div className="info">
                   <p>
-                    <b>{firstName + ' ' + lastName}</b>
+                    <b>{userData?.fullName}</b>
                   </p>
-                  <p>{email}</p>
+                  <p>{userData?.email}</p>
                 </div>
               </div>
               <div className="inner2">
                 <p onClick={() => navigate('/profile')}>My Profile</p>
                 <p
                   style={{ color: '#f89fa4' }}
-                  onClick={() => setOpenLogoutPopup(true)}
+                  onClick={() => {
+                    navigate('/')
+                    localStorage.clear()
+                  }}
                 >
                   <Logout /> Log out
                 </p>
