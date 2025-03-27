@@ -29,15 +29,15 @@ export const sideBarOption = [
   },
   { title: 'My Collection', icon: <DragIndicator />, link: '/themes' },
   { title: 'Invoice', icon: <Description />, link: '/invoice' },
+  { title: "Analytics", icon: <Description />, link: "/analytics" },
   { title: 'FAQ', icon: <Quiz />, link: '/faq' },
   { title: 'Support', icon: <Call />, link: '/support' },
 ]
 
-  { title: "Themes", icon: <DragIndicator />, link: "/themes" },
-  { title: "Analytics", icon: <Description />, link: "/analytics" },
-  { title: "FAQ", icon: <Quiz />, link: "/faq" },
-  { title: "Support", icon: <Call />, link: "/support" },
-];
+//   { title: "Themes", icon: <DragIndicator />, link: "/themes" },
+//   { title: "FAQ", icon: <Quiz />, link: "/faq" },
+//   { title: "Support", icon: <Call />, link: "/support" },
+// ];
 // {
 //   title: "Invoice",
 //   icon: <Description fontSize="small" />,
