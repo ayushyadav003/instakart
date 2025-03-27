@@ -22,7 +22,6 @@ export default function ProductList() {
 
     try {
       await axios.delete(`/products/${rowItem._id}`)
-
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product._id !== rowItem._id),
       )
