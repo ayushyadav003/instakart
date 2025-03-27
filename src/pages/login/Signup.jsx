@@ -32,7 +32,7 @@ export default function Signup() {
     email: Yup.string()
       .email('Please enter a valid email')
       .required('This field is required'),
-    mobileNumber: Yup.string()
+      mobile: Yup.string()
       .required('This field is required')
       .matches(/^\d+$/, 'Phone number must contain only digits')
       .min(10, 'Phone number cannot be less than 10 digits')
@@ -48,7 +48,7 @@ export default function Signup() {
   const formik = useFormik({
     initialValues: {
       email: '',
-      mobileNumber: null,
+      mobile: null,
       password: '',
       confirmPassword: '',
       fullName: '',
@@ -157,7 +157,7 @@ export default function Signup() {
                 },
               },
             }}
-            name="mobileNumber"
+            name="mobile"
             type={'number'}
             onInput={(e) => {
               e.target.value = Math.max(0, parseInt(e.target.value))
@@ -165,13 +165,13 @@ export default function Signup() {
                 .slice(0, 10)
             }}
             onChange={formik.handleChange}
-            value={formik.values.mobileNumber}
+            value={formik.values.mobile}
             error={Boolean(
-              formik.touched.mobileNumber && formik.errors.mobileNumber,
+              formik.touched.mobile && formik.errors.mobile,
             )}
             onBlur={formik.handleBlur}
             helperText={
-              formik.touched.mobileNumber ? formik.errors.mobileNumber : ''
+              formik.touched.mobile ? formik.errors.mobile : ''
             }
           />
           <TextField
