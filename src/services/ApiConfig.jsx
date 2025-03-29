@@ -1,11 +1,23 @@
 // const apiUrl = 'https://instakart-backend.onrender.com/api'
-const apiUrl = 'http://localhost:5000/api'
+const apiUrl = "/api/v1";
 
 export const apiConfig = {
   //auth
-  signup: `${apiUrl}/v1/auth/signup`,
-  login: `${apiUrl}/v1/auth/login`,
+  signup: `${apiUrl}/auth/signup`,
+  login: `http://localhost:5000/api/v1/auth/login`,
 
   //products
-  getProductList: `${apiUrl}/v1/products`,
-}
+  getProductList: `${apiUrl}/products/getAllProducts`,
+  getProductById: `${apiUrl}/products`,
+  updateProduct: `${apiUrl}/products`,
+  productUrl: `${apiUrl}/products`,
+
+  //variants
+  variantUrl: `${apiUrl}/variants`,
+
+  //orders
+  orderUrl: `${apiUrl}/orders`,
+
+  //customers
+  customerUrl: `${apiUrl}/customers`,
+};

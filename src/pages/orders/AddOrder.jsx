@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import "../../components/styles/Order.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Delete } from "@mui/icons-material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ApiWithToken } from "../../services/ApiWithToken";
+import { apiConfig } from "../../services/ApiConfig";
 
 const AddOrder = () => {
   const { orderId } = useParams(); // Get orderId from route
@@ -29,6 +30,7 @@ const AddOrder = () => {
     addressLine1: "",
     addressLine2: "",
     pincode: "",
+    orderId: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -39,12 +41,12 @@ const AddOrder = () => {
     setSearchTerm(inputSearchVal);
     if (inputSearchVal !== "") {
       try {
-        const searchResponse = await axios.get(
-          "/api/v1/products/search",
-          {
-            params: { q: inputSearchVal },
-          }
-        );
+        const apiOptions = {
+          url: `${apiConfig.productUrl}/search`, // Use the correct API endpoint
+          method: "GET", // Or POST, depending on your API
+          params: { q: inputSearchVal },
+        };
+        const searchResponse = await ApiWithToken(apiOptions);
         setSuggestions(searchResponse.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -188,51 +190,58 @@ const AddOrder = () => {
         let customerResponse;
 
         // Fetch customer by phone number
-        const phoneResponse = await axios.get(
-          `/api/v1/customers/getSingleCustomer`,
-          {
-            params: { identifier: customer.mobileNumber },
-          }
-        );
+        const customerPhoneResponse = await ApiWithToken({
+          url: `${apiConfig.customerUrl}/getSingleCustomer`, // Use the correct API endpoint
+          method: "GET",
+          params: { identifier: customer.mobileNumber },
+        });
 
-        console.log(phoneResponse, "phoneResponse");
-
-        if (phoneResponse.data) {
-          console.log("Customer found:", phoneResponse.data);
-          customerResponse = await axios.put(
-            `/api/v1/customers/${phoneResponse.data._id}`,
-            customer
-          );
+        if (customerPhoneResponse?.data) {
+          console.log(customerPhoneResponse, "customerPhoneResponse.data._id");
+          customerResponse = await ApiWithToken({
+            url: `${apiConfig.customerUrl}/${customerPhoneResponse.data._id}`, // Use the correct API endpoint
+            method: "PUT",
+            data: customer,
+          });
         } else {
-          console.log("No existing customer found, creating a new one.");
-          customerResponse = await axios.post(
-            "/api/v1/customers",
-            customer
-          );
+          customerResponse = await ApiWithToken({
+            url: apiConfig.customerUrl, // Use the correct API endpoint
+            method: "POST",
+            data: customer,
+          });
         }
 
         const productIds = orderItems.map((item) => item.id);
+        console.log(customerResponse, "customerResponse");
         const orderData = {
-          customerDetails: customerResponse.data.customer,
+          customerDetails: customerResponse.data, // Send only the ID
           products: productIds,
           paymentMethod: paymentForm.paymentMethod,
           totalAmount: paymentForm.total, // Ensure this is sent
+          orderId: customer.orderId,
         };
+
+        console.log(orderData, "orderdata ");
 
         let orderResponse;
         if (orderId) {
-          orderResponse = await axios.put(
-            `/api/v1/orders/${orderId}`,
-            orderData
-          );
+          console.log("In orderid");
+          orderResponse = await ApiWithToken({
+            url: `${apiConfig.orderUrl}/${orderId}`, // Use the correct API endpoint
+            method: "PUT",
+            data: orderData,
+          });
           toast.success("Order updated successfully!", {
             position: "bottom-right",
           });
         } else {
-          orderResponse = await axios.post(
-            "/api/v1/orders",
-            orderData
-          );
+          console.log("In orderid else");
+
+          orderResponse = await ApiWithToken({
+            url: apiConfig.orderUrl, // Use the correct API endpoint
+            method: "POST",
+            data: orderData,
+          });
           toast.success("Order created successfully!", {
             position: "bottom-right",
           });
@@ -268,12 +277,14 @@ const AddOrder = () => {
         setIsUpdate(true);
         setLoading(true);
         try {
-          const response = await axios.get(
-            `/api/v1/orders/${orderId}`
-          );
+          const apiOptions = {
+            url: `${apiConfig.orderUrl}/${orderId}`, // Use the correct API endpoint
+            method: "GET",
+          };
+
+          const response = await ApiWithToken(apiOptions);
           const order = response.data;
-          // console.log(order, "order");
-          // Assuming the API returns customer details nested as customerDetails
+          console.log(response, "responseorder");
           const {
             customer: customerDetails,
             products,
@@ -281,16 +292,9 @@ const AddOrder = () => {
             totalAmount,
           } = order;
 
-          console.log(
-            customerDetails,
-            products,
-            paymentMethod,
-            totalAmount,
-            "bha"
-          );
-
           // Populate customer form
           setCustomer({
+            orderId: order.orderId || "",
             firstName: customerDetails.firstName || "",
             lastName: customerDetails.lastName || "",
             mobileNumber: customerDetails.mobileNumber || "",
@@ -300,14 +304,18 @@ const AddOrder = () => {
             pincode: customerDetails.pincode || "",
           });
 
-          // Populate order items.  Map product IDs to a simplified structure.
-          const fetchedOrderItems = products.map((product) => ({
-            id: product._id,
-            title: product.title,
-            img: product.mediaUrls[0], // Or however you want to get the image
-            price: product.price,
-            comparePrice: product.comparePrice,
-          }));
+          // Populate order items
+          const fetchedOrderItems = await Promise.all(
+            products.map(async (productData) => {
+              return {
+                id: productData._id,
+                title: productData.title,
+                img: productData.mediaUrls[0],
+                price: productData.price,
+                comparePrice: productData.comparePrice,
+              };
+            })
+          );
           setOrderItems(fetchedOrderItems);
 
           // Populate payment form
@@ -426,6 +434,13 @@ const AddOrder = () => {
         <h3>Customer</h3>
         <div className="customer-form">
           <div>
+            <input
+              type="text"
+              name="orderId"
+              placeholder="Order ID *"
+              value={customer.orderId}
+              onChange={handleCustomerChange}
+            />
             <input
               type="text"
               name="firstName"

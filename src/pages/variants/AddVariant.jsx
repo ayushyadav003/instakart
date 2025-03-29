@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "react-toastify/dist/ReactToastify.css";
+import { apiConfig } from "../../services/ApiConfig";
+import { ApiWithToken } from "../../services/ApiWithToken";
+import axios from "axios";
 
 const AddVariant = () => {
   const navigate = useNavigate();
@@ -16,48 +18,55 @@ const AddVariant = () => {
     price: 0,
     comparePrice: 0,
   });
-const [productPrice, setProductPrice] = useState(0);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [productPrice, setProductPrice] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [productData, setProductData] = useState({}); // To store product data
 
   useEffect(() => {
-    const fetchVariantData = async () => {
+    const fetchData = async () => {
       try {
         // Fetch product data to get the default price
-        const productResponse = await axios.get(
-          `http://localhost:5000/api/v1/products/${productId}`
-        );
+        const productResponse = await ApiWithToken({
+          url: `${apiConfig.getProductById}/${productId}`, // Use the correct API endpoint
+          method: "GET",
+        });
+        setProductData(productResponse.data);
         setProductPrice(productResponse.data.price);
 
-        // Fetch variant data
-        const variantResponse = await axios.get(
-          `http://localhost:5000/api/v1/variants/${variantId}`
-        );
+        if (variantId) {
+          setIsUpdateMode(true);
+          // Fetch variant data
+          const variantResponse = await ApiWithToken({
+            url: `${apiConfig.variantUrl}/${variantId}`, // Use the correct API endpoint
+            method: "GET",
+          });
 
-        // Ensure media is an array of URLs
-        const variantData = variantResponse.data;
-        const mediaUrls = variantData.media || [];
+          const variantData = variantResponse.data;
+          const mediaUrls = variantData.media || [];
 
-        setFormData({
-          title: variantData.title,
-          media: mediaUrls,
-          quantity: variantData.quantity,
-          price: variantData.price,
-          comparePrice: variantData.comparePrice,
-        });
+          setFormData({
+            title: variantData.title,
+            media: mediaUrls,
+            quantity: variantData.quantity,
+            price: variantData.price,
+            comparePrice: variantData.comparePrice,
+          });
+        }
       } catch (error) {
-        console.error("Error fetching variant data:", error);
-        toast.error("Failed to fetch variant data.");
-        navigate(`/product/${productId}`); // Redirect to product page on error
+        console.error(
+          `Error fetching ${variantId ? "variant" : "product"} data:`,
+          error
+        );
+        toast.error(
+          `Failed to fetch ${variantId ? "variant" : "product"} data.`
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    if (productId && variantId) {
-      fetchVariantData();
-    } else {
-      setLoading(false); // Ensure loading is set to false if IDs are missing
-    }
+    fetchData();
   }, [productId, variantId, navigate]);
 
   const handleChange = (e) => {
@@ -108,10 +117,10 @@ const [productPrice, setProductPrice] = useState(0);
       const uploadedMediaUrls = await Promise.all(
         formData.media.map(async (file) => {
           if (typeof file === "string") {
-            return file; // Keep existing Cloudinary URLs
+            return file;
           }
           const uploadData = new FormData();
-          uploadData.append("file", file, file.name); // use file.name
+          uploadData.append("file", file, file.name);
           uploadData.append("upload_preset", "instakart");
 
           const response = await axios.post(
@@ -131,18 +140,48 @@ const [productPrice, setProductPrice] = useState(0);
         media: uploadedMediaUrls,
       };
 
-      await axios.put(`/api/v1/variants/${variantId}`, variantData);
+      if (isUpdateMode) {
+        // Update existing variant
+        await ApiWithToken({
+          url: `${apiConfig.variantUrl}/${variantId}`, // Correct URL
+          method: "PUT",
+          data: variantData,
+        });
+        toast.success("Variant updated successfully!");
+      } else {
+        // Add new variant and update product
+        const createVariantResponse = await ApiWithToken({
+          url: `${apiConfig.variantUrl}/${productId}`, // Correct URL for creating variant
+          method: "POST",
+          data: variantData,
+        });
 
-      toast.success("Variant updated successfully!");
-      navigate(`/product/${productId}`); // Redirect to product details page
+        const newVariantId = createVariantResponse.data._id; // Get the new variant ID
+
+        // Update the product with the new variant ID
+        await ApiWithToken({
+          url: `${apiConfig.updateProduct}/${productId}`, // Correct URL to update product
+          method: "PUT",
+          data: {
+            variants: [...(productData.variants || []), newVariantId], // Add the new ID to the existing array
+          },
+        });
+
+        toast.success("Variant added successfully!");
+      }
+
+      navigate(`/product/${productId}`);
     } catch (error) {
-      console.error("Error updating variant:", error);
-      toast.error("Failed to update variant.");
+      console.error(
+        `Error ${isUpdateMode ? "updating" : "adding"} variant:`,
+        error
+      );
+      toast.error(`Failed to ${isUpdateMode ? "update" : "add"} variant.`);
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>; // Simple loading indicator
+    return <div>Loading...</div>;
   }
 
   return (
@@ -152,7 +191,9 @@ const [productPrice, setProductPrice] = useState(0);
         <Link to={`/product/${productId}`}>
           <ArrowBackIcon />
         </Link>
-        <h2 className="header">Update Variant</h2>
+        <h2 className="header">
+          {isUpdateMode ? "Update Variant" : "Add Variant"}
+        </h2>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -228,7 +269,7 @@ const [productPrice, setProductPrice] = useState(0);
         </div>
 
         <button type="submit" className="submit-button">
-          Save Variant
+          {isUpdateMode ? "Save Variant" : "Add Variant"}
         </button>
       </form>
     </div>

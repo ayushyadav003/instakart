@@ -3,6 +3,7 @@ import { toast } from 'react-toastify'
 // import { toast } from "react-toastify";
 
 export const ApiWithToken = async ({ url, method, data, params }) => {
+  // console.log(url,method,data,params,'ddjddj  ')
   const userData = JSON.parse(localStorage.getItem('instakart-user-details'))
   console.log("token",userData)
   const apiOptions = {
