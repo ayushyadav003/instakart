@@ -12,6 +12,7 @@ import "../styles/CommonTable.scss";
 
 function CommonTable({ rows, type, head, onEdit, onDelete }) {
   let { productId } = useParams();
+  console.log(rows,'variantrows')
   const navigate = useNavigate();
   const renderRows = () => {
     return rows?.length > 0

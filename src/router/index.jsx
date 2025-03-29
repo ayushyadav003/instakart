@@ -16,6 +16,7 @@ import OrderList from "../pages/orders/OrderList";
 import AddOrder from "../pages/orders/AddOrder";
 import AddVariant from "../pages/variants/AddVariant";
 import Analytics from "../pages/analytics/Analytics";
+import Profile from "../pages/profile/Profile";
 
 export default function Router() {
   return (
@@ -141,6 +142,14 @@ export default function Router() {
           element={
             <DashboardLayout>
               <ThemeListing />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <DashboardLayout>
+              <Profile />
             </DashboardLayout>
           }
         />

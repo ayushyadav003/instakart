@@ -1,17 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "./AddProduct.scss";
 import CommonTable from "../../components/common/CommonTable";
 import { variantTableHead } from "../../utils/tableHead";
+import { ApiWithToken } from "../../services/ApiWithToken";
+import { apiConfig } from "../../services/ApiConfig";
+import { useDispatch } from "react-redux";
+import { startLoading, stopLoading } from "../../redux/features/userSlice";
+import axios from "axios";
 
 const AddProduct = () => {
   const navigate = useNavigate();
   const { productId } = useParams();
   const fileInputRef = useRef(null);
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -30,35 +35,49 @@ const AddProduct = () => {
 
   const [categoryInput, setCategoryInput] = useState("");
   const [productData, setProductData] = useState(null);
-  const [originalData, setOriginalData] = useState(null);
-  const [refreshVariants, setRefreshVariants] = useState(false); // Added state
+  const [refreshVariants, setRefreshVariants] = useState(false);
 
   useEffect(() => {
-    if (productId) {
-      axios
-        .get(`/api/v1/products/${productId}`)
-        .then((response) => {
-          const product = response.data;
-          setProductData(product);
-          setFormData({
-            title: product.title || "",
-            description: product.description || "",
-            status: product.status || "draft",
-            price: product.price || "",
-            comparePrice: product.comparePrice || "",
-            media: product.mediaUrls || [],
-            weight: product.weight || "",
-            length: product.length || "",
-            breadth: product.breadth || "",
-            height: product.height || "",
-            quantity: product.quantity || 0,
-            categories: product.categories || [],
+    const fetchProduct = async () => {
+      if (productId) {
+        try {
+          dispatch(startLoading());
+          const apiOptions = {
+            url: `${apiConfig.getProductById}/${productId}`,
+            method: "GET",
+          };
+          const response = await ApiWithToken(apiOptions);
+          console.log(response.data, "apidetails");
+          if (response?.status === 200) {
+            const product = response.data;
+            setProductData(product);
+            setFormData({
+              title: product.title || "",
+              description: product.description || "",
+              status: product.status || "draft",
+              price: product.price || "",
+              comparePrice: product.comparePrice || "",
+              media: product.mediaUrls || [],
+              weight: product.weight || "",
+              length: product.length || "",
+              breadth: product.breadth || "",
+              height: product.height || "",
+              quantity: product.quantity || 0,
+              categories: product.categories || [],
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching product:", error);
+          toast.error("Failed to fetch product data.", {
+            position: "bottom-right",
           });
-          setOriginalData(product);
-        })
-        .catch((error) => console.error("Error fetching product:", error));
-    }
-  }, [productId, refreshVariants]); // Added refreshVariants to dependency array
+        } finally {
+          dispatch(stopLoading());
+        }
+      }
+    };
+    fetchProduct();
+  }, [productId, refreshVariants, dispatch]);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -121,6 +140,7 @@ const AddProduct = () => {
     }
 
     try {
+      dispatch(startLoading());
       const existingMediaUrls = formData.media.filter(
         (item) => typeof item === "string"
       );
@@ -129,9 +149,12 @@ const AddProduct = () => {
       );
 
       const uploadedMediaUrls = await Promise.all(
-        newFiles.map(async (file) => {
+        formData.media.map(async (file) => {
+          if (typeof file === "string") {
+            return file;
+          }
           const uploadData = new FormData();
-          uploadData.append("file", file);
+          uploadData.append("file", file, file.name);
           uploadData.append("upload_preset", "instakart");
 
           const response = await axios.post(
@@ -143,59 +166,61 @@ const AddProduct = () => {
       );
 
       const mediaUrls = [...existingMediaUrls, ...uploadedMediaUrls];
-      const productData = { ...formData, mediaUrls };
+      const productDataToSend = { ...formData, mediaUrls };
 
+      let apiOptions;
       if (productId) {
-        await axios.put(`/api/v1/products/${productId}`, productData);
-        toast.success("Product updated successfully!", {
-          position: "bottom-right",
-        });
+        apiOptions = {
+          url: `${apiConfig.updateProduct}/${productId}`,
+          method: "PUT",
+          data: productDataToSend,
+        };omm
       } else {
-        await axios.post("/api/v1/products", productData);
-        toast.success("Product added successfully!", {
-          position: "bottom-right",
-        });
+        apiOptions = {
+          url: apiConfig.productUrl,
+          method: "POST",
+          data: productDataToSend,
+        };
       }
 
+      await ApiWithToken(apiOptions);
+
+      toast.success(
+        productId
+          ? "Product updated successfully!"
+          : "Product added successfully!",
+        {
+          position: "bottom-right",
+        }
+      );
       navigate("/products");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Operation failed.", { position: "bottom-right" });
+    } finally {
+      dispatch(stopLoading());
     }
   };
 
-  const handleDeleteVariant = async (variantIdToDelete) => {
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete this variant?`
-    );
-    if (!confirmDelete) return;
-
+  const handleDeleteVariant = async (variant) => {
     try {
-      await axios.delete(`/api/v1/variants/${variantIdToDelete._id}`);
-
-      // Update productData.variants to reflect the deletion and trigger re-render
-      setProductData((prevProductData) => {
-        if (!prevProductData || !prevProductData.variants)
-          return { ...prevProductData };
-
-        const updatedVariants = prevProductData.variants.filter(
-          (variant) => variant._id !== variantIdToDelete
-        );
-        return { ...prevProductData, variants: updatedVariants };
+      dispatch(startLoading());
+      const apiOptions = {
+        url: `${apiConfig.variantUrl}/${variant._id}`, // Corrected URL
+        method: "DELETE",
+      };
+      await ApiWithToken(apiOptions);
+      toast.success("Variant deleted successfully!", {
+        position: "bottom-right",
       });
-
-      // Also update the product on the server to remove variant ID from variants array.
-      await axios.put(`/api/v1/products/${productId}`, {
-        variants: productData?.variants?.filter(
-          (v) => v._id !== variantIdToDelete
-        ), //send only the IDs
-      });
-
-      toast.success("Variant deleted successfully!");
-      setRefreshVariants((prev) => !prev); // Trigger re-fetch of product data
+      setRefreshVariants((prev) => !prev); // Trigger refresh
     } catch (error) {
       console.error("Error deleting variant:", error);
-      toast.error("Failed to delete variant.");
+      toast.error("Failed to delete variant.", {
+        position: "bottom-right",
+      });
+    } finally {
+      dispatch(stopLoading());
     }
   };
 
@@ -339,26 +364,29 @@ const AddProduct = () => {
             ))}
           </div>
         </div>
+        {productId ? (
+          <div className="form-group">
+            <label>Variants</label>
 
-        <div className="form-group">
-          <label>Variants</label>
-
-          {productData &&
-          productData.variants &&
-          productData.variants.length > 0 ? (
-            <div className="variants-table-container">
-              <CommonTable
-                head={variantTableHead}
-                rows={productData.variants}
-                type="variants"
-                onDelete={handleDeleteVariant}
-              />
-            </div>
-          ) : null}
-          <Link to={`/add-variant/${productId}`} className="variant-btn">
-            Add variants
-          </Link>
-        </div>
+            {productData &&
+            productData.variants &&
+            productData.variants.length > 0 ? (
+              <div className="variants-table-container">
+                <CommonTable
+                  head={variantTableHead}
+                  rows={productData.variants}
+                  type="variants"
+                  onDelete={handleDeleteVariant} // Pass delete handler
+                />
+              </div>
+            ) : null}
+            <Link to={`/add-variant/${productId}`} className="variant-btn">
+              Add variants
+            </Link>
+          </div>
+        ) : (
+          <></>
+        )}
 
         <div className="form-group">
           <label>Pricing</label>
