@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { toast } from "react-hot-toast";
@@ -16,11 +16,13 @@ import "./login.scss";
 import { apiConfig } from "../../services/ApiConfig";
 import { useFormik } from "formik";
 import axios from "axios";
+import { ProfileContext } from "../../context/ProfileContext";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const { setProfilePicture } = useContext(ProfileContext);
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
@@ -86,6 +88,8 @@ export default function Login() {
             { expires: 90 }
           );
         }
+
+        setProfilePicture(resData?.profilePicture);
         navigate("/dashboard");
         toast.success("Logged in Successfully");
 
