@@ -16,6 +16,7 @@ import { ProfileContext } from "../context/ProfileContext";
 function DashboardLayout({ children }) {
   const navigate = useNavigate();
   const { profilePicture } = useContext(ProfileContext);
+  console.log(profilePicture, "profilePicturedashboard");
   const [showBack, setShowBack] = useState(false);
   const [walletAmount, setWalletAmount] = useState(0);
   const userData = JSON.parse(localStorage.getItem("instakart-user-details"));
@@ -26,7 +27,7 @@ function DashboardLayout({ children }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorElNotification, setAnchorElNotification] = useState(null);
   const [notificationList, setNotificationList] = useState([
-    "Welcome to Blitzshipz",
+    "Welcome to Instakart",
   ]);
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -57,7 +58,7 @@ function DashboardLayout({ children }) {
             )}
             <p>{heading || ""}</p>
           </div>
-          <div class="profile-section">
+          <div className="profile-section">
             <Badge badgeContent={1} color="secondary">
               <Notifications
                 id={popoverIdNotification}
@@ -95,13 +96,19 @@ function DashboardLayout({ children }) {
                 src={profilePicture}
                 onClick={handleOpen}
               />
+            ) : userData?.profilePicture ? (
+              <img
+                className="profileDp"
+                src={userData.profilePicture}
+                onClick={handleOpen}
+              />
             ) : (
               <span
                 id={popoverId}
                 className="profileDp text"
                 onClick={handleOpen}
               >
-                {userData?.name[0]}
+                {userData?.name?.[0]}
               </span>
             )}
           </div>

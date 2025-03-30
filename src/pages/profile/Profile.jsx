@@ -53,6 +53,7 @@ const Profile = () => {
           method: "GET",
         };
         const response = await ApiWithToken(apiOptions);
+        console.log(response.data.profilePicture, "rajatrajat");
         setUser({
           username: response.data.fullName || "",
           email: response.data.email || "",
@@ -122,6 +123,7 @@ const Profile = () => {
               formData
             );
             const imageUrl = cloudinaryResponse.data.secure_url;
+            console.log("Hrllo")
             setProfilePicture(imageUrl);
             setUser((prev) => ({ ...prev, profileImage: imageUrl }));
 
@@ -226,8 +228,12 @@ const Profile = () => {
           }}
           style={{ cursor: isEditing ? "pointer" : "default" }}
         >
-          {profilePicture !== "" ? (
-            <img src={profilePicture} alt="Profile" className="profile-image" />
+          {user.profileImage !== "" ? (
+            <img
+              src={user.profileImage}
+              alt="Profile"
+              className="profile-image"
+            />
           ) : (
             <div className="profile-image-placeholder">
               <span className="profile-image-text">{user?.name[0]}</span>
