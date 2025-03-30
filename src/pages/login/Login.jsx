@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import * as Yup from 'yup'
-import { toast } from 'react-hot-toast'
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import { toast } from "react-hot-toast";
 import {
   Button,
   Checkbox,
@@ -9,105 +9,107 @@ import {
   FormControlLabel,
   InputAdornment,
   TextField,
-} from '@mui/material'
-import Cookies from 'js-cookie'
-import { Email, Lock, Visibility, VisibilityOff } from '@mui/icons-material'
-import './login.scss'
-import { apiConfig } from '../../services/ApiConfig'
-import { useFormik } from 'formik'
-import axios from 'axios'
+} from "@mui/material";
+import Cookies from "js-cookie";
+import { Email, Lock, Visibility, VisibilityOff } from "@mui/icons-material";
+import "./login.scss";
+import { apiConfig } from "../../services/ApiConfig";
+import { useFormik } from "formik";
+import axios from "axios";
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
-  const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
   const handleRememberMe = (e) => {
-    setRememberMe(e.target.checked)
-  }
+    setRememberMe(e.target.checked);
+  };
 
   const validateSchema = Yup.object().shape({
     email: Yup.string()
-      .email('Please enter a valid email')
-      .required('This field is required'),
+      .email("Please enter a valid email")
+      .required("This field is required"),
     password: Yup.string()
-      .required('This field is required')
-      .min(5, 'Pasword must be 5 or more characters')
-      .matches(/\d/, 'Password should contain at least one number'),
-  })
+      .required("This field is required")
+      .min(5, "Pasword must be 5 or more characters")
+      .matches(/\d/, "Password should contain at least one number"),
+  });
 
   const formik = useFormik({
     initialValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
     validationSchema: validateSchema,
     onSubmit: (values) => {
-      handleSubmitForm(values)
+      handleSubmitForm(values);
     },
-  })
+  });
 
   const handleSubmitForm = async (values) => {
-    setLoading(true)
+    setLoading(true);
     try {
       const apiOptions = {
         url: apiConfig.login,
-        method: 'POST',
+        method: "POST",
         data: values,
         maxBodyLength: Infinity,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-      }
-      const response = await axios(apiOptions)
+      };
+      const response = await axios(apiOptions);
       if (response?.status === 200) {
-        const resData = response?.data
-        localStorage.setItem('instakart-user-details', JSON.stringify(resData))
+        const resData = response?.data;
+        console.log(resData, "resData");
+        localStorage.setItem("instakart-user-details", JSON.stringify(resData));
+
         if (rememberMe) {
           localStorage.setItem(
-            'instakart-remember-user',
+            "instakart-remember-user",
             JSON.stringify({
               email: values?.email,
               password: values?.password,
-            }),
-          )
+            })
+          );
           Cookies.set(
-            'instakart-remember-user',
+            "instakart-remember-user",
             JSON.stringify({
               email: values?.email,
               password: values?.password,
             }),
-            { expires: 90 },
-          )
+            { expires: 90 }
+          );
         }
-        navigate('/dashboard')
-        toast.success('Logged in Successfully')
+        navigate("/dashboard");
+        toast.success("Logged in Successfully");
 
-        setLoading(false)
+        setLoading(false);
       } else {
-        toast.error(response?.data?.message)
-        setLoading(false)
+        toast.error(response?.data?.message);
+        setLoading(false);
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || 'Something went wrong!')
-      setLoading(false)
+      toast.error(error?.response?.data?.message || "Something went wrong!");
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    const user = Cookies.get('instakart-remember-user')
+    const user = Cookies.get("instakart-remember-user");
     if (user) {
-      const parsedUser = JSON.parse(user)
+      const parsedUser = JSON.parse(user);
       formik.setValues({
         email: parsedUser.email,
         password: parsedUser.password,
-      })
+      });
     }
-  }, [])
+  }, []);
 
   return (
     <div className="loginForm">
@@ -124,10 +126,10 @@ export default function Login() {
           value={formik.values.email}
           placeholder="Enter your email address"
           sx={{
-            '& .MuiOutlinedInput-root': {
-              fontSize: '14px', // Reduce the font size by 1px
-              '& fieldset': {
-                borderColor: '#cde2e7', // Change the border color
+            "& .MuiOutlinedInput-root": {
+              fontSize: "14px", // Reduce the font size by 1px
+              "& fieldset": {
+                borderColor: "#cde2e7", // Change the border color
               },
             },
           }}
@@ -143,7 +145,7 @@ export default function Login() {
         />
         <TextField
           // label="Password"
-          type={showPassword ? 'text' : 'password'}
+          type={showPassword ? "text" : "password"}
           fullWidth
           placeholder="Enter your password"
           name="password"
@@ -154,10 +156,10 @@ export default function Login() {
           error={Boolean(formik.touched.password && formik.errors.password)}
           helperText={formik.touched.password && formik.errors.password}
           sx={{
-            '& .MuiOutlinedInput-root': {
-              fontSize: '14px', // Reduce the font size by 1px
-              '& fieldset': {
-                borderColor: '#cde2e7', // Change the border color
+            "& .MuiOutlinedInput-root": {
+              fontSize: "14px", // Reduce the font size by 1px
+              "& fieldset": {
+                borderColor: "#cde2e7", // Change the border color
               },
             },
           }}
@@ -170,7 +172,7 @@ export default function Login() {
             endAdornment: (
               <InputAdornment position="end">
                 <span
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                   onClick={togglePasswordVisibility}
                 >
                   {!showPassword ? <VisibilityOff /> : <Visibility />}
@@ -185,14 +187,14 @@ export default function Login() {
               <Checkbox
                 checked={rememberMe}
                 onChange={handleRememberMe}
-                sx={{ fontSize: '1px' }}
+                sx={{ fontSize: "1px" }}
               />
             }
-            label={<span style={{ fontSize: '13px' }}>Remember me</span>}
+            label={<span style={{ fontSize: "13px" }}>Remember me</span>}
           />
           <Link to="/forget-password">Forgot your password?</Link>
         </div>
-        <div className="remember" style={{ margin: '3rem  0 0 0' }}>
+        <div className="remember" style={{ margin: "3rem  0 0 0" }}>
           <Button
             variant="contained"
             className="loginBtn"
@@ -201,7 +203,7 @@ export default function Login() {
           >
             Log in
             {loading && (
-              <CircularProgress size={20} style={{ marginLeft: '1rem' }} />
+              <CircularProgress size={20} style={{ marginLeft: "1rem" }} />
             )}
           </Button>
           <p>
@@ -210,5 +212,5 @@ export default function Login() {
         </div>
       </form>
     </div>
-  )
+  );
 }

@@ -17,6 +17,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .profile-section {
+      margin: 1%;
+
+      .profileDp.text {
+        background-color: #fec201;
+        color: black;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    }
+
     .heading {
       padding: 0 20px;
       display: flex;
@@ -29,8 +46,10 @@
       }
     }
     img {
-      width: 100%;
-      height: 55px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
     }
     div {
       display: flex;
@@ -194,10 +213,17 @@
   .inner {
     display: flex;
     align-items: center;
+    gap: 10px;
     .info {
       p {
         margin: 0;
         font-size: 12px;
+      }
+
+      .user-name {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 3px;
       }
     }
   }
@@ -249,19 +275,6 @@
     }
   }
 }
-.profileDp {
-  background-color: #523d35;
-  color: #dcdcdc;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  justify-content: center;
-  width: 37px;
-  height: 37px;
-  margin-left: auto;
-  margin-right: 15px;
-  border-radius: 50%;
-}
 
 @media screen and (max-width: 850px) {
   .dashboardContainer {
@@ -274,6 +287,19 @@
     }
     .topHeader {
       width: 100%;
+      .profileDp {
+        background-color: #523d35;
+        color: #dcdcdc;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        margin-left: auto;
+        margin-right: 15px;
+        border-radius: 50%;
+      }
     }
   }
 
@@ -294,10 +320,6 @@
     display: none;
     img {
       height: 80px;
-    }
-    .arrowIcon {
-    }
-    .box {
     }
   }
   .loginLayout {
