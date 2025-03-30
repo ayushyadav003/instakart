@@ -4,7 +4,8 @@ const apiUrl = "/api/v1";
 export const apiConfig = {
   //auth
   signup: `${apiUrl}/auth/signup`,
-  login: `http://localhost:5000/api/v1/auth/login`,
+  login: `${apiUrl}/auth/login`,
+  profile:`${apiUrl}/auth/profile`,
 
   //products
   getProductList: `${apiUrl}/products/getAllProducts`,

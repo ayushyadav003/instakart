@@ -1,43 +1,45 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   AccountBalanceWallet,
   ArrowBackIos,
   Logout,
   Notifications,
-} from '@mui/icons-material'
-import './layout.scss'
-import { Badge, Popover } from '@mui/material'
-import { useSelector } from 'react-redux'
-import Sidebar from '../components/sidebar/Sidebar'
+} from "@mui/icons-material";
+import "./layout.scss";
+import { Badge, Popover } from "@mui/material";
+import { useSelector } from "react-redux";
+import Sidebar from "../components/sidebar/Sidebar";
+import { ProfileContext } from "../context/ProfileContext";
 
 function DashboardLayout({ children }) {
-  const navigate = useNavigate()
-  const [showBack, setShowBack] = useState(false)
-  const [walletAmount, setWalletAmount] = useState(0)
-  const userData = JSON.parse(localStorage.getItem('instakart-user-details'))
+  const navigate = useNavigate();
+  const { profilePicture } = useContext(ProfileContext);
+  const [showBack, setShowBack] = useState(false);
+  const [walletAmount, setWalletAmount] = useState(0);
+  const userData = JSON.parse(localStorage.getItem("instakart-user-details"));
   // const userID = localStorage.getItem("accountUserId");
 
-  const { heading } = useSelector(({ current }) => current)
+  const { heading } = useSelector(({ current }) => current);
 
-  const [anchorEl, setAnchorEl] = useState(null)
-  const [anchorElNotification, setAnchorElNotification] = useState(null)
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorElNotification, setAnchorElNotification] = useState(null);
   const [notificationList, setNotificationList] = useState([
-    'Welcome to Blitzshipz',
-  ])
+    "Welcome to Blitzshipz",
+  ]);
   const handleOpen = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleClose = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
-  const open = Boolean(anchorEl)
-  const openNotification = Boolean(anchorElNotification)
-  const popoverId = open ? 'simple-popover' : undefined
-  const popoverIdNotification = openNotification ? 'simple-popover' : undefined
+  const open = Boolean(anchorEl);
+  const openNotification = Boolean(anchorElNotification);
+  const popoverId = open ? "simple-popover" : undefined;
+  const popoverIdNotification = openNotification ? "simple-popover" : undefined;
 
   return (
     <div className="dashboardContainer">
@@ -49,17 +51,17 @@ function DashboardLayout({ children }) {
           <div className="heading">
             {showBack && (
               <ArrowBackIos
-                sx={{ cursor: 'pointer' }}
+                sx={{ cursor: "pointer" }}
                 onClick={() => navigate(-1)}
               />
             )}
-            <p>{heading || ''}</p>
+            <p>{heading || ""}</p>
           </div>
-          <div>
+          <div class="profile-section">
             <Badge badgeContent={1} color="secondary">
               <Notifications
                 id={popoverIdNotification}
-                sx={{ fontSize: '32px', cursor: 'pointer', color: '#041c2f' }}
+                sx={{ fontSize: "32px", cursor: "pointer", color: "#041c2f" }}
                 onClick={(e) => setAnchorElNotification(e.currentTarget)}
               />
             </Badge>
@@ -69,12 +71,12 @@ function DashboardLayout({ children }) {
               anchorEl={anchorElNotification}
               onClose={() => setAnchorElNotification(null)}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
+                vertical: "bottom",
+                horizontal: "left",
               }}
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
             >
               <div className="notificationPopoverWrapper">
@@ -87,9 +89,21 @@ function DashboardLayout({ children }) {
                 </div>
               </div>
             </Popover>
-            <span id={popoverId} className="profileDp" onClick={handleOpen}>
-              {userData?.fullName}
-            </span>
+            {profilePicture ? (
+              <img
+                className="profileDp"
+                src={profilePicture}
+                onClick={handleOpen}
+              />
+            ) : (
+              <span
+                id={popoverId}
+                className="profileDp text"
+                onClick={handleOpen}
+              >
+                {userData?.name[0]}
+              </span>
+            )}
           </div>
           <Popover
             id={popoverId}
@@ -97,34 +111,24 @@ function DashboardLayout({ children }) {
             anchorEl={anchorEl}
             onClose={handleClose}
             anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
+              vertical: "bottom",
+              horizontal: "left",
             }}
           >
             <div className="popoverWrapper">
               <div className="inner">
-                <span
-                  id={popoverId}
-                  className="profileDp"
-                  onClick={handleOpen}
-                  style={{ borderRadius: '5px', margin: '0' }}
-                >
-                  {userData?.fullName && userData?.fullName[0]}
-                </span>
                 <div className="info">
-                  <p>
-                    <b>{userData?.fullName}</b>
-                  </p>
+                  <p className="user-name">{userData?.name}</p>
                   <p>{userData?.email}</p>
                 </div>
               </div>
               <div className="inner2">
-                <p onClick={() => navigate('/profile')}>My Profile</p>
+                <p onClick={() => navigate("/profile")}>My Profile</p>
                 <p
-                  style={{ color: '#f89fa4' }}
+                  style={{ color: "#f89fa4" }}
                   onClick={() => {
-                    navigate('/')
-                    localStorage.clear()
+                    navigate("/");
+                    localStorage.clear();
                   }}
                 >
                   <Logout /> Log out
@@ -136,7 +140,7 @@ function DashboardLayout({ children }) {
         <div className="dashboard-content">{children}</div>
       </div>
     </div>
-  )
+  );
 }
 
-export default DashboardLayout
+export default DashboardLayout;

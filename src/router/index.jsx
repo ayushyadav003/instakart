@@ -17,22 +17,24 @@ import AddOrder from "../pages/orders/AddOrder";
 import AddVariant from "../pages/variants/AddVariant";
 import Analytics from "../pages/analytics/Analytics";
 import Profile from "../pages/profile/Profile";
+import { ProfileProvider } from "../context/ProfileContext";
 
 export default function Router() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <LoginLayout>
-              <Login />
+    <ProfileProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <LoginLayout>
+                <Login />
 
-              {/* <UnderMaintenance /> */}
-            </LoginLayout>
-          }
-        />
-        {/* <Route
+                {/* <UnderMaintenance /> */}
+              </LoginLayout>
+            }
+          />
+          {/* <Route
           path="/team-login"
           element={
             <LoginLayout>
@@ -40,144 +42,145 @@ export default function Router() {
             </LoginLayout>
           }
         /> */}
-        <Route
-          path="/forget-password"
-          element={
-            <LoginLayout>
-              <ForgetPassword />
-            </LoginLayout>
-          }
-        />
-        <Route
-          path="/reset-password"
-          element={
-            <LoginLayout>
-              <ResetPassword />
-            </LoginLayout>
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <LoginLayout>
-              <Signup />
-            </LoginLayout>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <DashboardLayout>
-              <Dashboard />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/orders"
-          element={
-            <DashboardLayout>
-              <OrderList />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/orders/:orderId"
-          element={
-            <DashboardLayout>
-              <AddOrder />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/add-order"
-          element={
-            <DashboardLayout>
-              <AddOrder />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/products"
-          element={
-            <DashboardLayout>
-              <ProductList />
-            </DashboardLayout>
-          }
-        />
+          <Route
+            path="/forget-password"
+            element={
+              <LoginLayout>
+                <ForgetPassword />
+              </LoginLayout>
+            }
+          />
+          <Route
+            path="/reset-password"
+            element={
+              <LoginLayout>
+                <ResetPassword />
+              </LoginLayout>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <LoginLayout>
+                <Signup />
+              </LoginLayout>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <DashboardLayout>
+                <Dashboard />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <DashboardLayout>
+                <OrderList />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/orders/:orderId"
+            element={
+              <DashboardLayout>
+                <AddOrder />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/add-order"
+            element={
+              <DashboardLayout>
+                <AddOrder />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/products"
+            element={
+              <DashboardLayout>
+                <ProductList />
+              </DashboardLayout>
+            }
+          />
 
-        <Route
-          path="/add-product"
-          element={
-            <DashboardLayout>
-              <AddProduct />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/add-variant/:productId"
-          element={
-            <DashboardLayout>
-              <AddVariant />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/variants/:productId/:variantId"
-          element={
-            <DashboardLayout>
-              <AddVariant />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/product/:productId"
-          element={
-            <DashboardLayout>
-              <AddProduct />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/themes"
-          element={
-            <DashboardLayout>
-              <ThemeListing />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <DashboardLayout>
-              <Profile />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/analytics"
-          element={
-            <DashboardLayout>
-              <Analytics />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/:id/collection"
-          element={
-            <StoreLayout>
-              <CollectionPage />
-            </StoreLayout>
-          }
-        />
-        <Route
-          path="/:storeId/:productId"
-          element={
-            <StoreLayout>
-              <ProductPage />
-            </StoreLayout>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/add-product"
+            element={
+              <DashboardLayout>
+                <AddProduct />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/add-variant/:productId"
+            element={
+              <DashboardLayout>
+                <AddVariant />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/variants/:productId/:variantId"
+            element={
+              <DashboardLayout>
+                <AddVariant />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/product/:productId"
+            element={
+              <DashboardLayout>
+                <AddProduct />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/themes"
+            element={
+              <DashboardLayout>
+                <ThemeListing />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <DashboardLayout>
+                <Profile />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <DashboardLayout>
+                <Analytics />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/:id/collection"
+            element={
+              <StoreLayout>
+                <CollectionPage />
+              </StoreLayout>
+            }
+          />
+          <Route
+            path="/:storeId/:productId"
+            element={
+              <StoreLayout>
+                <ProductPage />
+              </StoreLayout>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </ProfileProvider>
   );
 }
