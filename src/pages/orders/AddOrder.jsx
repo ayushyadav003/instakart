@@ -178,98 +178,87 @@ const AddOrder = () => {
 
   const handleCreateOrder = async () => {
     if (orderItems.length === 0) {
-      toast.error("Please add items to the order", {
-        position: "bottom-right",
-      });
-      return;
+        toast.error("Please add items to the order", {
+            position: "bottom-right",
+        });
+        return;
     }
 
     if (validateForm()) {
-      setLoading(true);
-      try {
-        let customerResponse;
+        setLoading(true);
+        try {
+            let customerResponse;
 
-        // Fetch customer by phone number
-        const customerPhoneResponse = await ApiWithToken({
-          url: `${apiConfig.customerUrl}/getSingleCustomer`, // Use the correct API endpoint
-          method: "GET",
-          params: { identifier: customer.mobileNumber },
-        });
+            // Fetch customer by phone number
+            const customerPhoneResponse = await ApiWithToken({
+                url: `${apiConfig.customerUrl}/getSingleCustomer`, // Use the correct API endpoint
+                method: "GET",
+                params: { identifier: customer.mobileNumber },
+            });
+            console.log(customerPhoneResponse, "customerPhoneResponse.data._id");
 
-        if (customerPhoneResponse?.data) {
-          console.log(customerPhoneResponse, "customerPhoneResponse.data._id");
-          customerResponse = await ApiWithToken({
-            url: `${apiConfig.customerUrl}/${customerPhoneResponse.data._id}`, // Use the correct API endpoint
-            method: "PUT",
-            data: customer,
-          });
-        } else {
-          customerResponse = await ApiWithToken({
-            url: apiConfig.customerUrl, // Use the correct API endpoint
-            method: "POST",
-            data: customer,
-          });
+            if (customerPhoneResponse?.data) {
+              alert('if');
+                customerResponse = await ApiWithToken({
+                    url: `${apiConfig.customerUrl}/${customerPhoneResponse.data._id}`, // Use the correct API endpoint
+                    method: "PUT",
+                    data: customer,
+                });
+            } else {
+              alert('else');
+                customerResponse = await ApiWithToken({
+                    url: apiConfig.customerUrl, // Use the correct API endpoint
+                    method: "POST",
+                    data: customer,
+                });
+            }
+
+            const productIds = orderItems.map((item) => item.id);
+            console.log(customerResponse, "customerResponse");
+            const orderData = {
+                customerId: customerResponse.data._id, // Send only the customer ID
+                products: productIds,
+                paymentMethod: paymentForm.paymentMethod,
+                totalAmount: paymentForm.total, // Ensure this is sent
+            };
+
+            console.log(orderData, "orderdata ");
+
+            let orderResponse;
+            if (orderId) {
+                console.log("In orderid");
+                orderResponse = await ApiWithToken({
+                    url: `${apiConfig.orderUrl}/${orderId}`, // Use the correct API endpoint
+                    method: "PUT",
+                    data: orderData,
+                });
+                toast.success("Order updated successfully!", {
+                    position: "bottom-right",
+                });
+            } else {
+                console.log("In orderid else");
+
+                orderResponse = await ApiWithToken({
+                    url: apiConfig.orderUrl, // Use the correct API endpoint
+                    method: "POST",
+                    data: orderData,
+                });
+                toast.success("Order created successfully!", {
+                    position: "bottom-right",
+                });
+            }
+
+            // ... rest of your code ...
+        } catch (error) {
+            console.error("Error creating or updating order:", error);
+            toast.error("Failed to create or update order. Please try again.", {
+                position: "bottom-right",
+            });
+        } finally {
+            setLoading(false);
         }
-
-        const productIds = orderItems.map((item) => item.id);
-        console.log(customerResponse, "customerResponse");
-        const orderData = {
-          customerDetails: customerResponse.data, // Send only the ID
-          products: productIds,
-          paymentMethod: paymentForm.paymentMethod,
-          totalAmount: paymentForm.total, // Ensure this is sent
-          orderId: customer.orderId,
-        };
-
-        console.log(orderData, "orderdata ");
-
-        let orderResponse;
-        if (orderId) {
-          console.log("In orderid");
-          orderResponse = await ApiWithToken({
-            url: `${apiConfig.orderUrl}/${orderId}`, // Use the correct API endpoint
-            method: "PUT",
-            data: orderData,
-          });
-          toast.success("Order updated successfully!", {
-            position: "bottom-right",
-          });
-        } else {
-          console.log("In orderid else");
-
-          orderResponse = await ApiWithToken({
-            url: apiConfig.orderUrl, // Use the correct API endpoint
-            method: "POST",
-            data: orderData,
-          });
-          toast.success("Order created successfully!", {
-            position: "bottom-right",
-          });
-        }
-
-        setOrderItems([]);
-        setCustomer({
-          firstName: "",
-          lastName: "",
-          mobileNumber: "",
-          email: "",
-          addressLine1: "",
-          addressLine2: "",
-          pincode: "",
-        });
-        setSearchTerm("");
-        setSuggestions([]);
-        navigate("/orders");
-      } catch (error) {
-        console.error("Error creating or updating order:", error);
-        toast.error("Failed to create or update order. Please try again.", {
-          position: "bottom-right",
-        });
-      } finally {
-        setLoading(false);
-      }
     }
-  };
+};
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -294,7 +283,6 @@ const AddOrder = () => {
 
           // Populate customer form
           setCustomer({
-            orderId: order.orderId || "",
             firstName: customerDetails.firstName || "",
             lastName: customerDetails.lastName || "",
             mobileNumber: customerDetails.mobileNumber || "",
@@ -434,13 +422,6 @@ const AddOrder = () => {
         <h3>Customer</h3>
         <div className="customer-form">
           <div>
-            <input
-              type="text"
-              name="orderId"
-              placeholder="Order ID *"
-              value={customer.orderId}
-              onChange={handleCustomerChange}
-            />
             <input
               type="text"
               name="firstName"
