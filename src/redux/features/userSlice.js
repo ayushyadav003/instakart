@@ -5,8 +5,7 @@ export const userSlice = createSlice({
   initialState: {
     isLoading: false,
     logout: false,
-    currentWarehouse: null,
-    verifyPopUp: false,
+    
   },
   reducers: {
     startLoading: (state) => {
