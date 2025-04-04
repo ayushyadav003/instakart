@@ -20,6 +20,7 @@ const AddOrder = () => {
     total: 0.0,
     paymentMethod: "Cash on Delivery", // Default value
   });
+  const [order, setOrder] = useState({});
   const searchRef = useRef(null);
   const containerRef = useRef(null);
   const [customer, setCustomer] = useState({
@@ -30,12 +31,77 @@ const AddOrder = () => {
     addressLine1: "",
     addressLine2: "",
     pincode: "",
-    orderId: "",
   });
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false); // Track if it's an update
+  const [isEditable, setIsEditable] = useState(false); // Track if it's an update
+  const originalPaymentRef = useRef(null);
+
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      if (orderId) {
+        setIsUpdate(true);
+        setLoading(true);
+        try {
+          const apiOptions = {
+            url: `${apiConfig.orderUrl}/${orderId}`, // Use the correct API endpoint
+            method: "GET",
+          };
+
+          const response = await ApiWithToken(apiOptions);
+          const order = response.data;
+          setOrder(order);
+          console.log(response, "responseorder");
+          const {
+            customer: customerDetails,
+            products,
+            paymentForm, // Use paymentForm from response
+          } = order;
+
+          // Populate customer form
+          setCustomer({
+            firstName: customerDetails.firstName || "",
+            lastName: customerDetails.lastName || "",
+            mobileNumber: customerDetails.mobileNumber || "",
+            email: customerDetails.email || "",
+            addressLine1: customerDetails.addressLine1 || "",
+            addressLine2: customerDetails.addressLine2 || "",
+            pincode: customerDetails.pincode || "",
+          });
+
+          // Populate order items
+          const fetchedOrderItems = await Promise.all(
+            products.map(async (productData) => {
+              return {
+                id: productData._id,
+                title: productData.title,
+                img: productData.mediaUrls[0],
+                price: productData.price,
+                comparePrice: productData.comparePrice,
+              };
+            })
+          );
+          setOrderItems(fetchedOrderItems);
+
+          // Populate payment form directly from response
+          setPaymentForm(paymentForm);
+
+          setSearchTerm("");
+          setSuggestions([]);
+        } catch (error) {
+          console.error("Error fetching order:", error);
+          toast.error("Failed to load order details.", {
+            position: "bottom-right",
+          });
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    fetchOrderDetails();
+  }, [orderId]);
 
   const handleSearchProduct = async (inputSearchVal) => {
     setSearchTerm(inputSearchVal);
@@ -71,13 +137,27 @@ const AddOrder = () => {
           comparePrice: product.comparePrice,
         },
       ]);
+
+      // NOTE : CALL UPDATE PATMENT FORM
+      updatePaymentForm([
+        ...orderItems,
+        {
+          id: product._id,
+          title: product.title,
+          img: product.mediaUrls[0],
+          price: product.price,
+          comparePrice: product.comparePrice,
+        },
+      ]);
     } else {
       setOrderItems((prev) => prev.filter((item) => item.id !== product._id));
+      updatePaymentForm(orderItems.filter((item) => item.id !== product._id));
     }
   };
 
   const handleDeleteItem = (productId) => {
     setOrderItems((prev) => prev.filter((item) => item.id !== productId));
+    updatePaymentForm(orderItems.filter((item) => item.id !== productId));
   };
 
   useEffect(() => {
@@ -91,7 +171,7 @@ const AddOrder = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
+  const updatePaymentForm = (orderItems) => {
     const subTotal = orderItems.reduce(
       (acc, item) => acc + item.comparePrice,
       0
@@ -102,13 +182,18 @@ const AddOrder = () => {
     );
     const total = subTotal - totalDiscounts;
 
-    setPaymentForm({
-      ...paymentForm,
-      subTotal,
-      totalDiscounts,
-      total,
-    });
-  }, [orderItems]);
+    setOrder((prevOrder) => ({
+      ...prevOrder,
+      paymentForm: {
+        ...prevOrder.paymentForm,
+        subTotal,
+        totalDiscounts,
+        total,
+      },
+    }));
+
+    originalPaymentRef.current = { subTotal, totalDiscounts, total };
+  };
 
   const handleCustomerChange = (e) => {
     const { name, value } = e.target;
@@ -176,156 +261,111 @@ const AddOrder = () => {
     return isValid;
   };
 
-  const handleCreateOrder = async () => {
-    if (orderItems.length === 0) {
-        toast.error("Please add items to the order", {
-            position: "bottom-right",
-        });
-        return;
-    }
+  const handleEditPayments = async () => {
+    setIsEditable(!isEditable);
+    if (isEditable) {
+      const updatedPaymentForm = { ...order.paymentForm };
+      const { paymentMethod, ...paymentFormWithoutMethod } = updatedPaymentForm;
 
-    if (validateForm()) {
-        setLoading(true);
+      if (
+        JSON.stringify(originalPaymentRef.current) !==
+        JSON.stringify(paymentFormWithoutMethod)
+      ) {
         try {
-            let customerResponse;
-
-            // Fetch customer by phone number
-            const customerPhoneResponse = await ApiWithToken({
-                url: `${apiConfig.customerUrl}/getSingleCustomer`, // Use the correct API endpoint
-                method: "GET",
-                params: { identifier: customer.mobileNumber },
-            });
-            console.log(customerPhoneResponse, "customerPhoneResponse.data._id");
-
-            if (customerPhoneResponse?.data) {
-              alert('if');
-                customerResponse = await ApiWithToken({
-                    url: `${apiConfig.customerUrl}/${customerPhoneResponse.data._id}`, // Use the correct API endpoint
-                    method: "PUT",
-                    data: customer,
-                });
-            } else {
-              alert('else');
-                customerResponse = await ApiWithToken({
-                    url: apiConfig.customerUrl, // Use the correct API endpoint
-                    method: "POST",
-                    data: customer,
-                });
-            }
-
-            const productIds = orderItems.map((item) => item.id);
-            console.log(customerResponse, "customerResponse");
-            const orderData = {
-                customerId: customerResponse.data._id, // Send only the customer ID
-                products: productIds,
-                paymentMethod: paymentForm.paymentMethod,
-                totalAmount: paymentForm.total, // Ensure this is sent
-            };
-
-            console.log(orderData, "orderdata ");
-
-            let orderResponse;
-            if (orderId) {
-                console.log("In orderid");
-                orderResponse = await ApiWithToken({
-                    url: `${apiConfig.orderUrl}/${orderId}`, // Use the correct API endpoint
-                    method: "PUT",
-                    data: orderData,
-                });
-                toast.success("Order updated successfully!", {
-                    position: "bottom-right",
-                });
-            } else {
-                console.log("In orderid else");
-
-                orderResponse = await ApiWithToken({
-                    url: apiConfig.orderUrl, // Use the correct API endpoint
-                    method: "POST",
-                    data: orderData,
-                });
-                toast.success("Order created successfully!", {
-                    position: "bottom-right",
-                });
-            }
-
-            // ... rest of your code ...
-        } catch (error) {
-            console.error("Error creating or updating order:", error);
-            toast.error("Failed to create or update order. Please try again.", {
-                position: "bottom-right",
-            });
-        } finally {
-            setLoading(false);
-        }
-    }
-};
-
-  useEffect(() => {
-    const fetchOrderDetails = async () => {
-      if (orderId) {
-        setIsUpdate(true);
-        setLoading(true);
-        try {
-          const apiOptions = {
-            url: `${apiConfig.orderUrl}/${orderId}`, // Use the correct API endpoint
-            method: "GET",
-          };
-
-          const response = await ApiWithToken(apiOptions);
-          const order = response.data;
-          console.log(response, "responseorder");
-          const {
-            customer: customerDetails,
-            products,
-            paymentMethod,
-            totalAmount,
-          } = order;
-
-          // Populate customer form
-          setCustomer({
-            firstName: customerDetails.firstName || "",
-            lastName: customerDetails.lastName || "",
-            mobileNumber: customerDetails.mobileNumber || "",
-            email: customerDetails.email || "",
-            addressLine1: customerDetails.addressLine1 || "",
-            addressLine2: customerDetails.addressLine2 || "",
-            pincode: customerDetails.pincode || "",
+          await ApiWithToken({
+            url: `${apiConfig.orderUrl}/${orderId}`,
+            method: "PUT",
+            data: { paymentForm: paymentFormWithoutMethod },
           });
-
-          // Populate order items
-          const fetchedOrderItems = await Promise.all(
-            products.map(async (productData) => {
-              return {
-                id: productData._id,
-                title: productData.title,
-                img: productData.mediaUrls[0],
-                price: productData.price,
-                comparePrice: productData.comparePrice,
-              };
-            })
-          );
-          setOrderItems(fetchedOrderItems);
-
-          // Populate payment form
-          setPaymentForm({
-            ...paymentForm,
-            paymentMethod: paymentMethod || "Cash on Delivery", // Or default
-            total: totalAmount,
-          });
-          setSearchTerm("");
-          setSuggestions([]);
+          toast.success("Order updated successfully!");
+          originalPaymentRef.current = { ...updatedPaymentForm };
         } catch (error) {
-          console.error("Error fetching order:", error);
-          toast.error("Failed to load order details.", {
+          console.error("Error updating payment method:", error);
+          toast.error("Failed to update payment method. Please try again.", {
             position: "bottom-right",
           });
-        } finally {
-          setLoading(false);
         }
       }
-    };
-    fetchOrderDetails();
-  }, [orderId]);
+    }
+  };
+
+  const handleCreateOrder = async () => {
+    if (orderItems.length === 0) {
+      toast.error("Please add items to the order", { position: "bottom-right" });
+      return;
+    }
+    if (!validateForm()) return;
+
+    setLoading(true);
+    try {
+      const customerPhoneResponse = await ApiWithToken({
+        url: `${apiConfig.customerUrl}/getSingleCustomer`,
+        method: "GET",
+        params: { identifier: customer.mobileNumber },
+      });
+
+      const customerResponse = customerPhoneResponse?.data
+        ? await ApiWithToken({
+            url: `${apiConfig.customerUrl}/${customerPhoneResponse.data._id}`,
+            method: "PUT",
+            data: customer,
+          })
+        : await ApiWithToken({
+            url: apiConfig.customerUrl,
+            method: "POST",
+            data: customer,
+          });
+
+      const orderData = {
+        customerDetails: customerResponse.data,
+        products: orderItems.map((item) => item.id),
+        totalAmount: paymentForm.total,
+        paymentForm,
+      };
+
+      const orderResponse = orderId
+        ? await ApiWithToken({
+            url: `${apiConfig.orderUrl}/${orderId}`,
+            method: "PUT",
+            data: orderData,
+          })
+        : await ApiWithToken({
+            url: apiConfig.orderUrl,
+            method: "POST",
+            data: orderData,
+          });
+
+      toast.success(
+        orderId ? "Order updated successfully!" : "Order created successfully!",
+        { position: "bottom-right" }
+      );
+
+      resetForm();
+      navigate("/orders");
+    } catch (error) {
+      console.error("Error creating or updating order:", error);
+      toast.error("Failed to create or update order. Please try again.", {
+        position: "bottom-right",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setOrderItems([]);
+    setCustomer({
+      firstName: "",
+      lastName: "",
+      mobileNumber: "",
+      email: "",
+      addressLine1: "",
+      addressLine2: "",
+      pincode: "",
+    });
+    setSearchTerm("");
+    setSuggestions([]);
+  };
 
   return (
     <div className="add-order-container">
@@ -401,19 +441,84 @@ const AddOrder = () => {
       </div>
 
       <div className="section payment">
-        <h3>Payment</h3>
+        <div class="payment-header">
+          <h3>Payment</h3>
+          {isEditable ? (
+            <button
+              className="edit-button"
+              onClick={() => handleEditPayments()}
+            >
+              Save
+            </button>
+          ) : (
+            <button
+              className="edit-button"
+              onClick={() => setIsEditable(!isEditable)}
+            >
+              Edit
+            </button>
+          )}
+        </div>
         <div className="payment-details">
           <div className="row">
             <span>Subtotal</span>
-            <span>₹{paymentForm.subTotal}</span>
+            {isEditable ? (
+              <input
+                type="number"
+                value={order?.paymentForm?.subTotal}
+                onChange={(e) =>
+                  setOrder((prevOrder) => ({
+                    ...prevOrder,
+                    paymentForm: {
+                      ...prevOrder.paymentForm,
+                      subTotal: parseFloat(e.target.value),
+                    },
+                  }))
+                }
+              />
+            ) : (
+              <span>₹{order?.paymentForm?.subTotal}</span>
+            )}
           </div>
           <div className="row">
             <span>Total discount</span>
-            <span>₹{paymentForm.totalDiscounts}</span>
+            {isEditable ? (
+              <input
+                type="number"
+                value={order?.paymentForm?.totalDiscounts}
+                onChange={(e) =>
+                  setOrder((prevOrder) => ({
+                    ...prevOrder,
+                    paymentForm: {
+                      ...prevOrder.paymentForm,
+                      totalDiscounts: parseFloat(e.target.value),
+                    },
+                  }))
+                }
+              />
+            ) : (
+              <span>₹{order?.paymentForm?.totalDiscounts}</span>
+            )}
           </div>
           <div className="row total">
             <span>Total</span>
-            <span>₹{paymentForm.total}</span>
+            {isEditable ? (
+              <input
+                type="number"
+                value={order?.paymentForm?.total}
+                onChange={(e) =>
+                  setOrder((prevOrder) => ({
+                    ...prevOrder,
+                    paymentForm: {
+                      ...prevOrder.paymentForm,
+                      total: parseFloat(e.target.value),
+                    },
+                  }))
+                }
+              />
+            ) : (
+              <span>₹{order?.paymentForm?.total}</span>
+            )}
           </div>
         </div>
       </div>

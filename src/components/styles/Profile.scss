@@ -1,9 +1,4 @@
-$primary-color: #1a5293; // Dark Blue
-$secondary-color: #e3e5e8; // Light Gray
-$text-color: #333;
-$light-text-color: #666;
-$white: #fff;
-$danger: #dc3545;
+@import "./color.scss";
 
 .profile-container {
   text-align: left;
@@ -99,23 +94,7 @@ $danger: #dc3545;
 .section-title {
   font-size: 1.25rem;
   font-weight: bold;
-  color: $primary-color;
   margin-bottom: 0;
-}
-
-.edit-button {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  border: none;
-  background-color: $secondary-color;
-  color: $text-color;
-}
-
-.edit-button:hover {
-  background-color: darken($secondary-color, 10%);
 }
 
 .info-grid {
@@ -162,20 +141,7 @@ $danger: #dc3545;
   margin-top: 1rem;
 }
 
-.save-button {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  border: none;
-  background-color: $primary-color;
-  color: $white;
-}
 
-.save-button:hover {
-  background-color: darken($primary-color, 10%);
-}
 
 @media (max-width: 600px) {
   .profile-container {

@@ -1,6 +1,6 @@
 // @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Kumbh+Sans:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url("https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap");
-
+@import "./components/styles/_color.scss";
 * {
   padding: 0;
   margin: 0;
@@ -125,4 +125,42 @@ body {
   td:last-child {
     border-radius: 0 10px 10px 0;
   }
+}
+
+.edit-button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+  background-color: $secondary-color;
+  color: $text-color;
+}
+
+.edit-button:hover {
+  background-color: darken($secondary-color, 10%);
+}
+
+.save-button {
+  padding: 0.5rem 1rem;
+
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+  background-color: $primary-color;
+  color: black;
+}
+
+.save-button:hover {
+  background-color: darken($primary-color, 10%);
+}
+
+input {
+  // flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
