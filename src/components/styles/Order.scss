@@ -102,6 +102,13 @@
   }
 
   .payment {
+    .payment-header{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3%;
+      
+    }
     .payment-details {
       .row {
         display: flex;

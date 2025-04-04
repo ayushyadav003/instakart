@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -22,6 +22,8 @@ import {
 } from "@mui/material";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { Box } from "@mui/system";
+import { Grid } from "@mui/material";
+import { Chip } from "@mui/material";
 
 ChartJS.register(
   ArcElement,
@@ -37,24 +39,49 @@ ChartJS.register(
 
 // Mock Data (Replace with actual data fetching)
 const getGrossSalesData = () => ({
+  title: "Total Sales",
   today: 1616.44,
-  yesterday: 1000, // Mock data
-  change: 56, // Mock change percentage
+  yesterday: 1000,
+  change: 56,
+});
+
+const getTotalOrdersData = () => ({
+  title: "Total Orders",
+  orders: 120,
+  yesterdayOrders: 100,
+  change: 20,
+});
+
+const getPaymentsReceivedData = () => ({
+  title: "Payments Received",
+  payments: 1500.5,
+  yesterdayPayments: 1200,
+  change: 25,
+});
+
+const getTotalItemsSoldData = () => ({
+  title: "Total Items Sold",
+  items: 500,
+  yesterdayItems: 450,
+  change: 11.11,
 });
 
 const getReturningCustomerRateData = () => ({
+  title: "Returning Customer Rate", //Added title
   rate: 75,
   yesterdayRate: 60,
   change: 27,
 });
 
 const getOrdersFulfilledData = () => ({
+  title: "Orders Fulfilled", //Added title
   orders: 0,
   yesterdayOrders: 5,
   change: -100,
 });
 
 const getOrdersData = () => ({
+  title: "Orders", //Added title
   orders: 16,
   yesterdayOrders: 11,
   change: 43,
@@ -99,106 +126,71 @@ const getTotalSalesBreakdownData = () => ({
 });
 
 const SalesOverview = () => {
-  const grossSalesData = getGrossSalesData();
-  const returningCustomerRateData = getReturningCustomerRateData();
-  const ordersFulfilledData = getOrdersFulfilledData();
-  const ordersData = getOrdersData();
+  const overviewData = [
+    getGrossSalesData(),
+    getTotalOrdersData(),
+    getPaymentsReceivedData(),
+    getTotalItemsSoldData(),
+  ];
+
+  console.log(overviewData, "overviewData");
 
   return (
-    <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-      <Card sx={{ flex: 1, minWidth: 200 }}>
-        <CardHeader title="Gross Sales" />
-        <CardContent>
-          <Typography variant="h5">
-            CA$ {grossSalesData.today.toFixed(2)}
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-            {grossSalesData.change >= 0 ? (
-              <ArrowUpward sx={{ color: "green" }} />
-            ) : (
-              <ArrowDownward sx={{ color: "red" }} />
-            )}
-            <Typography
-              variant="body2"
-              sx={{
-                color: grossSalesData.change >= 0 ? "green" : "red",
-                ml: 0.5,
-              }}
-            >
-              {grossSalesData.change.toFixed(2)}%
-            </Typography>
-          </Box>
-        </CardContent>
-      </Card>
+    <Grid container spacing={2}>
+      {overviewData.map((data, index) => {
+        let displayValue = "";
+        if (
+          data?.title?.includes("Sales") ||
+          data?.title?.includes("Received")
+        ) {
+          displayValue = `₹${data?.today?.toFixed(2)}`;
+        } else if (data.title.includes("Rate")) {
+          displayValue = `${data?.rate}%`;
+        } else {
+          displayValue = data?.orders || data?.items;
+        }
 
-      <Card sx={{ flex: 1, minWidth: 200 }}>
-        <CardHeader title="Returning Customer Rate" />
-        <CardContent>
-          <Typography variant="h5">
-            {returningCustomerRateData.rate}%
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-            {returningCustomerRateData.change >= 0 ? (
-              <ArrowUpward sx={{ color: "green" }} />
-            ) : (
-              <ArrowDownward sx={{ color: "red" }} />
-            )}
-            <Typography
-              variant="body2"
-              sx={{
-                color: returningCustomerRateData.change >= 0 ? "green" : "red",
-                ml: 0.5,
-              }}
-            >
-              {returningCustomerRateData.change.toFixed(2)}%
-            </Typography>
-          </Box>
-        </CardContent>
-      </Card>
-
-      <Card sx={{ flex: 1, minWidth: 200 }}>
-        <CardHeader title="Orders Fulfilled" />
-        <CardContent>
-          <Typography variant="h5">{ordersFulfilledData.orders}</Typography>
-          <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-            {ordersFulfilledData.change >= 0 ? (
-              <ArrowUpward sx={{ color: "green" }} />
-            ) : (
-              <ArrowDownward sx={{ color: "red" }} />
-            )}
-            <Typography
-              variant="body2"
-              sx={{
-                color: ordersFulfilledData.change >= 0 ? "green" : "red",
-                ml: 0.5,
-              }}
-            >
-              {ordersFulfilledData.change.toFixed(2)}%
-            </Typography>
-          </Box>
-        </CardContent>
-      </Card>
-
-      <Card sx={{ flex: 1, minWidth: 200 }}>
-        <CardHeader title="Orders" />
-        <CardContent>
-          <Typography variant="h5">{ordersData.orders}</Typography>
-          <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-            {ordersData.change >= 0 ? (
-              <ArrowUpward sx={{ color: "green" }} />
-            ) : (
-              <ArrowDownward sx={{ color: "red" }} />
-            )}
-            <Typography
-              variant="body2"
-              sx={{ color: ordersData.change >= 0 ? "green" : "red", ml: 0.5 }}
-            >
-              {ordersData.change.toFixed(2)}%
-            </Typography>
-          </Box>
-        </CardContent>
-      </Card>
-    </Box>
+        return (
+          <Grid item key={index} xs={12} sm={6} md={3}>
+            <Card>
+              <CardHeader
+                titleTypographyProps={{
+                  variant: "p",
+                  fontSize: "22px",
+                  fontWeight: "600",
+                }}
+                sx={{ textAlign: "left" }} // Add this line to left-align the title
+                title={data.title}
+              />
+              <CardContent
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="h5" sx={{ fontSize: "16px" }}>
+                  {displayValue}
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+                  {data.change >= 0 ? (
+                    <Chip
+                      label={`${data.change.toFixed(2)}%`}
+                      style={{ background: "green", color: "white" }}
+                    />
+                  ) : (
+                    <Chip
+                      label={`${data.change.toFixed(2)}%`}
+                      style={{ background: "red", color: "white" }}
+                    />
+                  )}
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        );
+      })}
+    </Grid>
   );
 };
 
@@ -251,7 +243,7 @@ const TotalSalesOverTime = () => {
         },
         ticks: {
           callback: function (value) {
-            return "CA$" + value; // Add CA$ prefix
+            return "₹" + value; // Add ₹ prefix
           },
         },
         grid: {
@@ -281,7 +273,7 @@ const TotalSalesOverTime = () => {
               label += ": ";
             }
             if (typeof context.parsed.y !== "undefined") {
-              label += "CA$" + context.parsed.y.toFixed(2);
+              label += "₹" + context.parsed.y.toFixed(2);
             }
             return label;
           },
@@ -292,7 +284,10 @@ const TotalSalesOverTime = () => {
 
   return (
     <Card sx={{ width: "100%", height: "100%", minHeight: 300 }}>
-      <CardHeader title="Total Sales Over Time" />
+      <CardHeader
+        title="Total Sales Over Time"
+        sx={{ textAlign: "left" }} 
+      />
       <CardContent sx={{ height: "100%", display: "flex" }}>
         <div style={{ width: "100%", height: "100%" }}>
           <Line data={data} options={options} height={"300px"} />
@@ -356,7 +351,7 @@ const TotalSalesBreakdown = () => {
         },
         ticks: {
           callback: function (value) {
-            return "CA$" + value;
+            return "₹" + value;
           },
         },
         grid: {
@@ -384,7 +379,7 @@ const TotalSalesBreakdown = () => {
               label += ": ";
             }
             if (typeof context.parsed.y !== "undefined") {
-              label += "CA$" + context.parsed.y.toFixed(2);
+              label += "₹" + context.parsed.y.toFixed(2);
               const change = breakdownData.changes[context.dataIndex];
               if (typeof change !== "undefined") {
                 label +=
@@ -462,7 +457,7 @@ const SalesBreakdownPieChart = () => {
               label += ": ";
             }
             if (typeof context.parsed !== "undefined") {
-              label += "CA$" + context.parsed.toFixed(2);
+              label += "₹" + context.parsed.toFixed(2);
               const change = breakdownData.changes[context.dataIndex];
               if (typeof change !== "undefined") {
                 label +=
@@ -537,7 +532,7 @@ const Analytics = () => {
       </Box>
       <SalesOverview />
 
-      <Box sx={{ display: "flex", gap: 3, mt: 4 }}>
+      <Box sx={{ display: "flex", gap: 3, mt: 4, flexWrap: "wrap" }}>
         <TotalSalesOverTime sx={{ flex: 2, minWidth: 300 }} />
         <TotalSalesBreakdown sx={{ flex: 1, minWidth: 300 }} />
         <SalesBreakdownPieChart sx={{ flex: 1, minWidth: 300 }} />
