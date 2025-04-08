@@ -1,95 +1,95 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import "./AddProduct.scss";
-import CommonTable from "../../components/common/CommonTable";
-import { variantTableHead } from "../../utils/tableHead";
-import { ApiWithToken } from "../../services/ApiWithToken";
-import { apiConfig } from "../../services/ApiConfig";
-import { useDispatch } from "react-redux";
-import { startLoading, stopLoading } from "../../redux/features/userSlice";
-import axios from "axios";
+import React, { useState, useRef, useEffect } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import './AddProduct.scss'
+import CommonTable from '../../components/common/CommonTable'
+import { variantTableHead } from '../../utils/tableHead'
+import { ApiWithToken } from '../../services/ApiWithToken'
+import { apiConfig } from '../../services/ApiConfig'
+import { useDispatch } from 'react-redux'
+import { startLoading, stopLoading } from '../../redux/features/userSlice'
+import axios from 'axios'
 
 const AddProduct = () => {
-  const navigate = useNavigate();
-  const { productId } = useParams();
-  const fileInputRef = useRef(null);
-  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const { productId } = useParams()
+  const fileInputRef = useRef(null)
+  const dispatch = useDispatch()
 
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    status: "draft",
-    price: "",
-    comparePrice: "",
+    title: '',
+    description: '',
+    status: 'draft',
+    price: '',
+    comparePrice: '',
     media: [],
-    weight: "",
-    length: "",
-    breadth: "",
-    height: "",
+    weight: '',
+    length: '',
+    breadth: '',
+    height: '',
     quantity: 0,
     categories: [],
-  });
+  })
 
-  const [categoryInput, setCategoryInput] = useState("");
-  const [productData, setProductData] = useState(null);
-  const [refreshVariants, setRefreshVariants] = useState(false);
+  const [categoryInput, setCategoryInput] = useState('')
+  const [productData, setProductData] = useState(null)
+  const [refreshVariants, setRefreshVariants] = useState(false)
 
   useEffect(() => {
     const fetchProduct = async () => {
       if (productId) {
         try {
-          dispatch(startLoading());
+          dispatch(startLoading())
           const apiOptions = {
             url: `${apiConfig.getProductById}/${productId}`,
-            method: "GET",
-          };
-          const response = await ApiWithToken(apiOptions);
-          console.log(response.data, "apidetails");
+            method: 'GET',
+          }
+          const response = await ApiWithToken(apiOptions)
+          console.log(response.data, 'apidetails')
           if (response?.status === 200) {
-            const product = response.data;
-            setProductData(product);
+            const product = response.data
+            setProductData(product)
             setFormData({
-              title: product.title || "",
-              description: product.description || "",
-              status: product.status || "draft",
-              price: product.price || "",
-              comparePrice: product.comparePrice || "",
+              title: product.title || '',
+              description: product.description || '',
+              status: product.status || 'draft',
+              price: product.price || '',
+              comparePrice: product.comparePrice || '',
               media: product.mediaUrls || [],
-              weight: product.weight || "",
-              length: product.length || "",
-              breadth: product.breadth || "",
-              height: product.height || "",
+              weight: product.weight || '',
+              length: product.length || '',
+              breadth: product.breadth || '',
+              height: product.height || '',
               quantity: product.quantity || 0,
               categories: product.categories || [],
-            });
+            })
           }
         } catch (error) {
-          console.error("Error fetching product:", error);
-          toast.error("Failed to fetch product data.", {
-            position: "bottom-right",
-          });
+          console.error('Error fetching product:', error)
+          toast.error('Failed to fetch product data.', {
+            position: 'bottom-right',
+          })
         } finally {
-          dispatch(stopLoading());
+          dispatch(stopLoading())
         }
       }
-    };
-    fetchProduct();
-  }, [productId, refreshVariants, dispatch]);
+    }
+    fetchProduct()
+  }, [productId, refreshVariants, dispatch])
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+    const { name, value, type, files } = e.target
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === "file" ? [...files] : value,
-    }));
-  };
+      [name]: type === 'file' ? [...files] : value,
+    }))
+  }
 
   const handleCategoryChange = (e) => {
-    setCategoryInput(e.target.value);
-  };
+    setCategoryInput(e.target.value)
+  }
 
   const handleCategoryAdd = () => {
     if (
@@ -99,130 +99,127 @@ const AddProduct = () => {
       setFormData((prevData) => ({
         ...prevData,
         categories: [...prevData.categories, categoryInput.trim()],
-      }));
-      setCategoryInput("");
+      }))
+      setCategoryInput('')
     }
-  };
+  }
 
   const handleCategoryRemove = (category) => {
     setFormData((prevData) => ({
       ...prevData,
       categories: prevData.categories.filter((c) => c !== category),
-    }));
-  };
+    }))
+  }
 
   const removeMedia = (index) => {
     setFormData((prevData) => ({
       ...prevData,
       media: prevData.media.filter((_, i) => i !== index),
-    }));
-    if (fileInputRef.current) fileInputRef.current.value = null;
-  };
+    }))
+    if (fileInputRef.current) fileInputRef.current.value = null
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!formData.title || !formData.price) {
-      toast.error("Title and Price are required.", {
-        position: "bottom-right",
-      });
-      return;
+      toast.error('Title and Price are required.', {
+        position: 'bottom-right',
+      })
+      return
     }
 
     if (
       formData.comparePrice &&
       parseFloat(formData.price) >= parseFloat(formData.comparePrice)
     ) {
-      toast.error("Price must be less than Compare-at price.", {
-        position: "bottom-right",
-      });
-      return;
+      toast.error('Price must be less than Compare-at price.', {
+        position: 'bottom-right',
+      })
+      return
     }
 
     try {
-      dispatch(startLoading());
+      dispatch(startLoading())
       const existingMediaUrls = formData.media.filter(
-        (item) => typeof item === "string"
-      );
-      const newFiles = formData.media.filter(
-        (item) => typeof item !== "string"
-      );
+        (item) => typeof item === 'string',
+      )
+      const newFiles = formData.media.filter((item) => typeof item !== 'string')
 
       const uploadedMediaUrls = await Promise.all(
         formData.media.map(async (file) => {
-          if (typeof file === "string") {
-            return file;
+          if (typeof file === 'string') {
+            return file
           }
-          const uploadData = new FormData();
-          uploadData.append("file", file, file.name);
-          uploadData.append("upload_preset", "instakart");
+          const uploadData = new FormData()
+          uploadData.append('file', file, file.name)
+          uploadData.append('upload_preset', 'instakart')
 
           const response = await axios.post(
-            "https://api.cloudinary.com/v1_1/dobzi0uvb/image/upload",
-            uploadData
-          );
-          return response.data.secure_url;
-        })
-      );
+            'https://api.cloudinary.com/v1_1/dobzi0uvb/image/upload',
+            uploadData,
+          )
+          return response.data.secure_url
+        }),
+      )
 
-      const mediaUrls = [...existingMediaUrls, ...uploadedMediaUrls];
-      const productDataToSend = { ...formData, mediaUrls };
+      const mediaUrls = [...existingMediaUrls, ...uploadedMediaUrls]
+      const productDataToSend = { ...formData, mediaUrls }
 
-      let apiOptions;
+      let apiOptions
       if (productId) {
         apiOptions = {
           url: `${apiConfig.updateProduct}/${productId}`,
-          method: "PUT",
+          method: 'PUT',
           data: productDataToSend,
-        };omm
+        }
       } else {
         apiOptions = {
-          url: apiConfig.productUrl,
-          method: "POST",
+          url: apiConfig.createProduct,
+          method: 'POST',
           data: productDataToSend,
-        };
+        }
       }
 
-      await ApiWithToken(apiOptions);
+      const response = await ApiWithToken(apiOptions)
 
-      toast.success(
-        productId
-          ? "Product updated successfully!"
-          : "Product added successfully!",
-        {
-          position: "bottom-right",
-        }
-      );
-      navigate("/products");
+      if (response?.data?.statusCode == 201) {
+        toast.success(
+          productId
+            ? 'Product updated successfully!'
+            : 'Product added successfully!',
+        )
+      }
+      navigate('/products')
     } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("Operation failed.", { position: "bottom-right" });
+      console.error('Error submitting form:', error)
+      toast.error('Operation failed.', { position: 'bottom-right' })
     } finally {
-      dispatch(stopLoading());
+      dispatch(stopLoading())
     }
-  };
+  }
 
   const handleDeleteVariant = async (variant) => {
     try {
-      dispatch(startLoading());
+      dispatch(startLoading())
       const apiOptions = {
         url: `${apiConfig.variantUrl}/${variant._id}`, // Corrected URL
-        method: "DELETE",
-      };
-      await ApiWithToken(apiOptions);
-      toast.success("Variant deleted successfully!", {
-        position: "bottom-right",
-      });
-      setRefreshVariants((prev) => !prev); // Trigger refresh
+        method: 'DELETE',
+      }
+      await ApiWithToken(apiOptions)
+      toast.success('Variant deleted successfully!', {
+        position: 'bottom-right',
+      })
+      setRefreshVariants((prev) => !prev) // Trigger refresh
     } catch (error) {
-      console.error("Error deleting variant:", error);
-      toast.error("Failed to delete variant.", {
-        position: "bottom-right",
-      });
+      console.error('Error deleting variant:', error)
+      toast.error('Failed to delete variant.', {
+        position: 'bottom-right',
+      })
     } finally {
-      dispatch(stopLoading());
+      dispatch(stopLoading())
     }
-  };
+  }
 
   return (
     <div className="add-product-container">
@@ -232,7 +229,7 @@ const AddProduct = () => {
           <ArrowBackIcon />
         </Link>
         <h2 className="header">
-          {productId ? "Update Product" : "Add Product"}
+          {productId ? 'Update Product' : 'Add Product'}
         </h2>
       </div>
       <form onSubmit={handleSubmit}>
@@ -269,7 +266,7 @@ const AddProduct = () => {
               <div key={index} className="media-preview-item">
                 <img
                   src={
-                    typeof file === "string" ? file : URL.createObjectURL(file)
+                    typeof file === 'string' ? file : URL.createObjectURL(file)
                   }
                   alt={`preview-${index}`}
                   className="preview-image"
@@ -343,9 +340,9 @@ const AddProduct = () => {
               onChange={handleCategoryChange}
               placeholder="Enter category name"
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleCategoryAdd();
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  handleCategoryAdd()
                 }
               }}
             />
@@ -409,11 +406,11 @@ const AddProduct = () => {
         </div>
 
         <button type="submit" className="submit-button">
-          {productId ? "Update Product" : "Add Product"}
+          {productId ? 'Update Product' : 'Add Product'}
         </button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default AddProduct;
+export default AddProduct

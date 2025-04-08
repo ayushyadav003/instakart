@@ -1,25 +1,30 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import FacebookIcon from '@mui/icons-material/Facebook'
 import InstagramIcon from '@mui/icons-material/Instagram'
 import TwitterIcon from '@mui/icons-material/Twitter'
 import './StoreLayout.scss'
+import { Drawer } from '@mui/material'
+import Cart from '../../components/collection/cart/Cart'
 
 const StoreLayout = ({ children }) => {
+  const [cart, setCart] = useState(false)
   return (
     <div className="store-layout">
       {/* Header */}
       <header className="store-header">
         <div className="logo">My Store</div>
         <div className="cart-icon">
-          <ShoppingCartOutlinedIcon fontSize="medium" />
+          <ShoppingCartOutlinedIcon fontSize="medium" onClick={()=> setCart(true)} />
         </div>
       </header>
 
       {/* Main Content */}
       <main className="store-content">{children}</main>
-
+      <Drawer anchor={"right"} open={cart} onClose={() => setCart(false)}>
+        <Cart />
+      </Drawer>
       {/* Footer */}
       <footer className="store-footer">
         <div className="footer-content">

@@ -36,7 +36,7 @@ function ProductPage() {
   // Fetch product data based on ID (for now using sample data)
   const product = sampleProducts.find((p) => p.id === productId)
 
-  const getProduct = async () => {
+  const getProductList = async () => {
     try {
       dispatch(startLoading())
       const apiOptions = {
@@ -58,7 +58,7 @@ function ProductPage() {
   }
 
   useEffect(() => {
-    getProduct()
+    getProductList()
   }, [productId])
 
   if (!product) {

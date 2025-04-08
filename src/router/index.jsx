@@ -1,23 +1,23 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
-import ThemeListing from "../pages/themes/Themes";
-import CollectionPage from "../components/collection/Collections";
-import StoreLayout from "../layouts/store/StoreLayout";
-import ProductPage from "../components/productPage/ProductPage";
-import Login from "../pages/login/Login";
-import LoginLayout from "../layouts/LoginLayout";
-import DashboardLayout from "../layouts/DashboardLayout";
-import Signup from "../pages/login/Signup";
-import ForgetPassword from "../pages/login/ForgetPassword";
-import ResetPassword from "../pages/login/ResetPasswrod";
-import Dashboard from "../pages/dashboard/Dashboard";
-import ProductList from "../pages/products/ProductList";
-import AddProduct from "../pages/products/AddProduct";
-import OrderList from "../pages/orders/OrderList";
-import AddOrder from "../pages/orders/AddOrder";
-import AddVariant from "../pages/variants/AddVariant";
-import Analytics from "../pages/analytics/Analytics";
-import Profile from "../pages/profile/Profile";
-import { ProfileProvider } from "../context/ProfileContext";
+import { Routes, Route, BrowserRouter } from 'react-router-dom'
+import ThemeListing from '../pages/themes/Themes'
+import CollectionPage from '../components/collection/Collections'
+import StoreLayout from '../layouts/store/StoreLayout'
+import ProductPage from '../components/productPage/ProductPage'
+import Login from '../pages/login/Login'
+import LoginLayout from '../layouts/LoginLayout'
+import DashboardLayout from '../layouts/DashboardLayout'
+import Signup from '../pages/login/Signup'
+import ForgetPassword from '../pages/login/ForgetPassword'
+import ResetPassword from '../pages/login/ResetPasswrod'
+import Dashboard from '../pages/dashboard/Dashboard'
+import ProductList from '../pages/products/ProductList'
+import AddProduct from '../pages/products/AddProduct'
+import OrderList from '../pages/orders/OrderList'
+import AddOrder from '../pages/orders/AddOrder'
+import AddVariant from '../pages/variants/AddVariant'
+import Analytics from '../pages/analytics/Analytics'
+import Profile from '../pages/profile/Profile'
+import { ProfileProvider } from '../context/ProfileContext'
 
 export default function Router() {
   return (
@@ -140,7 +140,7 @@ export default function Router() {
             }
           />
           <Route
-            path="/themes"
+            path="/collections/:id"
             element={
               <DashboardLayout>
                 <ThemeListing />
@@ -182,5 +182,5 @@ export default function Router() {
         </Routes>
       </BrowserRouter>
     </ProfileProvider>
-  );
+  )
 }
