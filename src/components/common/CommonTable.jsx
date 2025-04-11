@@ -10,6 +10,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "@mui/material";
 import "../styles/CommonTable.scss";
 
+// Utility function to strip HTML tags
+const stripHTML = (html) => {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || div.innerText || "";
+};
+
 function CommonTable({ rows, type, head, onEdit, onDelete }) {
   let { productId } = useParams();
   console.log(rows,'variantrows')
@@ -35,7 +42,9 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
                       alt="Product"
                     />
                   </TableCell>
-                  <TableCell component="th">{row?.description || "--"}</TableCell>
+                  <TableCell component="th">
+                    {row?.description ? stripHTML(row.description) : "--"}
+                  </TableCell>
                   <TableCell>₹{row?.price}</TableCell>
                   <TableCell component="th">
                     <div className="centerItem">

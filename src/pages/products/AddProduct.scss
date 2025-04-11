@@ -34,7 +34,7 @@
   align-items: baseline;
   gap: 12px;
 
-  .variant-btn{
+  .variant-btn {
     font-size: 12px;
   }
 
@@ -55,16 +55,21 @@
 }
 
 .form-group input,
-.form-group textarea,
+.description-editor,
 .form-group select {
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
+  background: white;
   border-radius: 4px;
   box-sizing: border-box;
 }
 
-.form-group textarea {
+.rsw-editor{
+  width: 100%;
+}
+
+.description-editor {
   height: 100px;
 }
 
