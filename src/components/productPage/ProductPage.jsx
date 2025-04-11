@@ -1,50 +1,64 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import './ProductPage.scss'
-
-const sampleProducts = [
-  {
-    id: '1',
-    name: 'Handmade Greeting Card',
-    description:
-      'A beautifully crafted handmade greeting card for special occasions.',
-    price: '₹299',
-    comparePrice: '₹399',
-    image: 'https://images.pexels.com/photos/2072181/pexels-photo-2072181.jpeg',
-  },
-  {
-    id: '2',
-    name: 'Vintage Notebook',
-    description: 'A vintage-style notebook with premium-quality paper.',
-    price: '₹499',
-    comparePrice: '₹699',
-    image: 'https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg',
-  },
-]
+import { useDispatch } from 'react-redux'
+import { apiConfig } from '../../services/ApiConfig'
+import { ApiWithToken } from '../../services/ApiWithToken'
+import { startLoading, stopLoading } from '../../redux/features/userSlice'
 
 function ProductPage() {
   const { productId } = useParams()
+  const dispatch = useDispatch()
+  const [productData, setProductData] = useState({})
+  const [quatity, setQuantity] = useState(1)
 
-  if (!product) {
-    return <h2>Product Not Found</h2>
+  const getProduct = async () => {
+    try {
+      dispatch(startLoading())
+      const apiOptions = {
+        url: `${apiConfig.getProductById}/${productId}`,
+        method: 'GET',
+        params: {
+          id: productId,
+        },
+      }
+      const response = await ApiWithToken(apiOptions)
+      if (response?.status === 200) {
+        setProductData(response?.data?.data)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      dispatch(stopLoading())
+    }
   }
+  const addToCart = () => {
+    // const cartData
+  }
+
+  useEffect(() => {
+    getProduct()
+  }, [])
 
   return (
     <div className="product-page">
       <div className="product-image">
-        <img src={product.image} alt={product.name} />
+        <img
+          src={productData?.mediaUrls?.length > 0 && productData?.mediaUrls[0]}
+          alt={productData.name}
+        />
       </div>
       <div className="product-details">
-        <h1>{product.name}</h1>
-        <p className="product-description">{product.description}</p>
+        <h1>{productData?.title}</h1>
+        <p className="product-description">{productData.description}</p>
         <div className="product-price">
-          <span className="price">{product.price}</span>
-          <span className="compare-price">{product.comparePrice}</span>
+          <span className="price">{productData.price}</span>
+          <span className="compare-price">{productData.comparePrice}</span>
         </div>
         <div className="product-buttons">
           <button className="buy-button">Buy Now</button>
-          <button className="cart-button">
+          <button className="cart-button" onClick={()=> addToCart()}>
             <ShoppingCartOutlinedIcon /> Add to Cart
           </button>
         </div>

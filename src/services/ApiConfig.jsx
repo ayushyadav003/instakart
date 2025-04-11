@@ -11,7 +11,7 @@ export const apiConfig = {
   getProductList: `${apiUrl}/products/getAllProducts`,
   getProductById: `${apiUrl}/products`,
   updateProduct: `${apiUrl}/products`,
-  productUrl: `${apiUrl}/products`,
+  createProduct: `${apiUrl}/products`,
 
   //variants
   variantUrl: `${apiUrl}/variants`,
@@ -21,4 +21,7 @@ export const apiConfig = {
 
   //customers
   customerUrl: `${apiUrl}/customers`,
+
+  //transactions
+  transaction : `${apiUrl}/transactions`,
 };

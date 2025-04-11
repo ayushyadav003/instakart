@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import './CollectionPage.scss'
 import { startLoading, stopLoading } from '../../redux/features/userSlice'
 import { apiConfig } from '../../services/ApiConfig'
@@ -7,65 +7,97 @@ import { ApiWithToken } from '../../services/ApiWithToken'
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 
-
+const category = [
+  'Shirts',
+  'T-shirts',
+  'Jeans',
+  'Pants',
+  'Jackets',
+  'Shoes',
+  'Under Garments',
+]
 const CollectionPage = () => {
   const { id } = useParams() // Get store ID from URL
   const navigate = useNavigate()
   const [collections, setCollections] = useState([])
   const dispatch = useDispatch()
+  const location = useLocation()
+  const currentPath = location?.pathname.split('/')
+  const businessName = currentPath[2]
 
   const handleProductClick = (productId) => {
-    navigate(`/${id}/${productId}`) // Navigate to Product Page
+    console.log(productId)
+    navigate(`/${businessName}/${productId}`) // Navigate to Product Page
   }
 
-    const getCollections = async () => {
-      try {
-        dispatch(startLoading())
-        const apiOptions = {
-          url: apiConfig.product,
-          method: 'GET',
-
-        }
-        const response = await ApiWithToken(apiOptions)
-        if (response?.status === 200) {
-          setCollections(response?.data?.data)
-        }
-      } catch (error) {
-        console.log(error)
-      } finally {
-        dispatch(stopLoading())
+  const getCollections = async () => {
+    try {
+      dispatch(startLoading())
+      const apiOptions = {
+        url: apiConfig.getProductList,
+        method: 'POST',
+        data: { businessName: currentPath[2] },
       }
+      const response = await ApiWithToken(apiOptions)
+      if (response?.data?.statusCode === 200) {
+        setCollections(response?.data?.data)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      dispatch(stopLoading())
     }
+  }
 
-    useEffect(()=>{
+  useEffect(() => {
+    if (businessName) {
       getCollections()
-    },[])
-  
+    }
+  }, [businessName])
 
   return (
     <div className="collection-page">
-      <h2 className="collection-title">Collection for Store: {id}</h2>
-      <div className="product-grid">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="product-card"
-            onClick={() => handleProductClick(product.id)}
-          >
-            <img
-              src={product.image}
-              alt={product.name}
-              className="product-image"
-            />
-            <h3 className="product-name">{product.name}</h3>
-            <p className="product-description">{product.description}</p>
-
-            <div className="button-container">
-              <button className="buy-button">Buy Now</button>
-              <button className="cart-button">Add to Cart</button>
+      <div className="categoryWrapper">
+        <h4>Category</h4>
+        <div className="categories">
+          {category.map((data, i) => (
+            <div key={i}>
+              <input type="checkbox" />
+              <p>{data}</p>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+      </div>
+      <div className="productWrapper">
+        {collections?.length > 0 &&
+          collections.map((product) => (
+            <div
+              key={product.id}
+              className="productCard"
+              onClick={() => handleProductClick(product?._id)}
+            >
+              <div className="imageContainer">
+                <img
+                  src={product.mediaUrls[0]}
+                  alt={product.name}
+                  className="product-image"
+                />
+              </div>
+              <div className="productDetails">
+                <div className="inner">
+                  <p className="product-name">{product.title}</p>
+                  <h5 className="product-price">₹{product.price}</h5>
+                </div>
+
+                <p className="description">{product.description}</p>
+
+                <div className="buttonContainer">
+                  <button className="buyButton">Buy Now</button>
+                  <button className="cartButton">Add to Cart</button>
+                </div>
+              </div>
+            </div>
+          ))}
       </div>
     </div>
   )

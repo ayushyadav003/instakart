@@ -20,10 +20,10 @@ import Editor, {
 } from "react-simple-wysiwyg";
 
 const AddProduct = () => {
-  const navigate = useNavigate();
-  const { productId } = useParams();
-  const fileInputRef = useRef(null);
-  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const { productId } = useParams()
+  const fileInputRef = useRef(null)
+  const dispatch = useDispatch()
 
   // Default form state matching your original structure
   const defaultFormData = {
@@ -92,10 +92,10 @@ const AddProduct = () => {
             });
           }
         } catch (error) {
-          console.error("Error fetching product:", error);
-          toast.error("Failed to fetch product data.", {
-            position: "bottom-right",
-          });
+          console.error('Error fetching product:', error)
+          toast.error('Failed to fetch product data.', {
+            position: 'bottom-right',
+          })
         } finally {
           dispatch(stopLoading()); // Stop loading
         }
@@ -144,8 +144,8 @@ const AddProduct = () => {
 
   // --- Category Handlers ---
   const handleCategoryChange = (e) => {
-    setCategoryInput(e.target.value);
-  };
+    setCategoryInput(e.target.value)
+  }
 
   const handleCategoryAdd = () => {
     const newCategory = categoryInput.trim();
@@ -156,7 +156,7 @@ const AddProduct = () => {
       }));
       setCategoryInput(""); // Clear input after adding
     }
-  };
+  }
 
   const handleCategoryRemove = (categoryToRemove) => {
     setFormData((prevData) => ({
@@ -190,19 +190,19 @@ const AddProduct = () => {
 
     // --- Validation ---
     if (!formData.title || !formData.price) {
-      toast.error("Title and Price are required.", {
-        position: "bottom-right",
-      });
-      return;
+      toast.error('Title and Price are required.', {
+        position: 'bottom-right',
+      })
+      return
     }
     if (
       formData.comparePrice &&
       parseFloat(formData.price) >= parseFloat(formData.comparePrice)
     ) {
-      toast.error("Price must be less than Compare-at price.", {
-        position: "bottom-right",
-      });
-      return;
+      toast.error('Price must be less than Compare-at price.', {
+        position: 'bottom-right',
+      })
+      return
     }
 
     // --- Check for Changes (only for updates) ---
@@ -337,14 +337,14 @@ const AddProduct = () => {
     } finally {
       dispatch(stopLoading()); // Stop loading indicator
     }
-  };
+  }
 
   // --- Variant Deletion Handler ---
   const handleDeleteVariant = async (variantToDelete) => {
     if (!productData || !variantToDelete) return;
     console.log("Attempting to delete variant:", variantToDelete);
     try {
-      dispatch(startLoading());
+      dispatch(startLoading())
       const apiOptions = {
         url: `${apiConfig.variantUrl}/${variantToDelete._id}`, // Your actual delete endpoint
         method: "DELETE",
@@ -360,9 +360,9 @@ const AddProduct = () => {
       console.error("Error deleting variant:", error);
       toast.error("Failed to delete variant.", { position: "bottom-right" });
     } finally {
-      dispatch(stopLoading());
+      dispatch(stopLoading())
     }
-  };
+  }
 
   // --- JSX Structure based on your original code ---
   return (
@@ -377,7 +377,7 @@ const AddProduct = () => {
           <ArrowBackIcon />
         </Link>
         <h2 className="header">
-          {productId ? "Update Product" : "Add Product"}
+          {productId ? 'Update Product' : 'Add Product'}
         </h2>
       </div>
       <form onSubmit={handleSubmit}>
@@ -528,9 +528,9 @@ const AddProduct = () => {
               onChange={handleCategoryChange}
               placeholder="Enter category name"
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleCategoryAdd();
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  handleCategoryAdd()
                 }
               }}
             />
@@ -632,7 +632,7 @@ const AddProduct = () => {
         </button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default AddProduct;
+export default AddProduct

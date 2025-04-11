@@ -12,11 +12,7 @@ function Sidebar() {
   const location = useLocation();
   const [hide, setHide] = useState(false);
 
-  useEffect(() => {
-    if (!location.pathname.includes("/track-order")) {
-      localStorage.removeItem("track-order-filter");
-    }
-  }, [location]);
+
 
   return (
     <>
@@ -25,9 +21,9 @@ function Sidebar() {
           <Tooltip title="My profile" placement="bottom-end">
             <Link to="/profile">
               {hide ? (
-                <img src="assets/images/logo/logo_light.png" />
+                <img src="/assets/images/logo/logo_light.png" />
               ) : (
-                <img src="assets/images/logo/logo_light.png" />
+                <img src="/assets/images/logo/logo_light.png" />
               )}
             </Link>
           </Tooltip>
