@@ -34,7 +34,7 @@ export const sideBarOption = [
   {
     title: 'Transactions',
     icon: <AccountBalanceWallet fontSize="small" />,
-    link: '/transactions',
+    link: '/transactions/all',
   },
   {
     title: 'My Collection',

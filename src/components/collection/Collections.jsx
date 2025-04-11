@@ -7,6 +7,15 @@ import { ApiWithToken } from '../../services/ApiWithToken'
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 
+const category = [
+  'Shirts',
+  'T-shirts',
+  'Jeans',
+  'Pants',
+  'Jackets',
+  'Shoes',
+  'Under Garments',
+]
 const CollectionPage = () => {
   const { id } = useParams() // Get store ID from URL
   const navigate = useNavigate()
@@ -41,40 +50,50 @@ const CollectionPage = () => {
   }
 
   useEffect(() => {
-    if(businessName){
+    if (businessName) {
       getCollections()
     }
   }, [businessName])
 
   return (
     <div className="collection-page">
-      <div className="collectionHeader">
-        <img />
+      <div className="categoryWrapper">
+        <h4>Category</h4>
+        <div className="categories">
+          {category.map((data, i) => (
+            <div key={i}>
+              <input type="checkbox" />
+              <p>{data}</p>
+            </div>
+          ))}
+        </div>
       </div>
-      {/* <h2 className="collection-title">Collection for Store: {id}</h2> */}
-      <div className="product-grid">
+      <div className="productWrapper">
         {collections?.length > 0 &&
           collections.map((product) => (
             <div
               key={product.id}
-              className="product-card"
+              className="productCard"
               onClick={() => handleProductClick(product?._id)}
             >
-              <div className="image-container">
+              <div className="imageContainer">
                 <img
                   src={product.mediaUrls[0]}
                   alt={product.name}
                   className="product-image"
                 />
               </div>
-              <div className="product-details">
-                <h3 className="product-name">{product.title}</h3>
-                <p className="product-description">{product.description}</p>
-                <p className="product-price">₹{product.price}</p>
+              <div className="productDetails">
+                <div className="inner">
+                  <p className="product-name">{product.title}</p>
+                  <h5 className="product-price">₹{product.price}</h5>
+                </div>
 
-                <div className="button-container">
-                  <button className="buy-button">Buy Now</button>
-                  <button className="cart-button">Add to Cart</button>
+                <p className="description">{product.description}</p>
+
+                <div className="buttonContainer">
+                  <button className="buyButton">Buy Now</button>
+                  <button className="cartButton">Add to Cart</button>
                 </div>
               </div>
             </div>

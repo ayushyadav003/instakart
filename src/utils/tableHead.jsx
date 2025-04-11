@@ -6,6 +6,15 @@ export const productTableHead = [
   "Price",
   "Delete",
 ];
+export const transactionTableHead = [
+  "S no.",
+  "Title",
+  'Transaction ID',
+  "Description",
+  'Type',
+  "status",
+  "Amount",
+];
 
 export const orderTableHead = [
   "S no.",

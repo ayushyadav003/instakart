@@ -1,11 +1,11 @@
 // @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&family=Kumbh+Sans:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-@import url("https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap");
-@import "./components/styles/_color.scss";
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap');
+@import './components/styles/_color.scss';
 * {
   padding: 0;
   margin: 0;
   // font-family: Kumbh Sans, sans-serif;
-  font-family: "Epilogue", sans-serif;
+  font-family: 'Epilogue', sans-serif;
   box-sizing: border-box;
 }
 
@@ -41,11 +41,11 @@ body {
   }
 
   /* Firefox */
-  input[type="number"] {
+  input[type='number'] {
     -moz-appearance: textfield;
   }
   .optionsWrapper {
-    background-image: url("/images/dashboardbg.svg");
+    background-image: url('/images/dashboardbg.svg');
     height: 75px;
     // width: 100%;
     background-color: #fff;
@@ -163,4 +163,27 @@ input {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+.optionsWrapper {
+  display: flex;
+  height: 65px;
+  background-color: #fff;
+  .optionsInner {
+    display: flex;
+    padding: 0 2rem;
+    gap: 3rem;
+    align-items: flex-end;
+    // border-bottom: 1px solid #ebeaf2;
+    .selectedOption {
+      border-bottom: 3px solid #2d3b48;
+    }
+  }
+  a,
+  span {
+    color: #000;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0 0 10px 0;
+  }
 }

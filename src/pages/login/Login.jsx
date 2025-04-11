@@ -68,8 +68,6 @@ export default function Login() {
       const response = await axios(apiOptions);
       if (response?.status === 200) {
         const resData = response?.data;
-        console.log(resData,'resdata')
-        console.log(resData, "resData");
         localStorage.setItem("instakart-user-details", JSON.stringify(resData));
 
         if (rememberMe) {
@@ -91,7 +89,7 @@ export default function Login() {
         }
 
         setProfilePicture(resData?.profilePicture);
-        navigate("/dashboard");
+        window.location.href = "/dashboard";
         toast.success("Logged in Successfully");
 
         setLoading(false);

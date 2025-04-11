@@ -21,4 +21,7 @@ export const apiConfig = {
 
   //customers
   customerUrl: `${apiUrl}/customers`,
+
+  //transactions
+  transaction : `${apiUrl}/transactions`,
 };

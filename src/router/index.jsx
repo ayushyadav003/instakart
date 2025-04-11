@@ -18,6 +18,7 @@ import AddVariant from '../pages/variants/AddVariant'
 import Analytics from '../pages/analytics/Analytics'
 import Profile from '../pages/profile/Profile'
 import { ProfileProvider } from '../context/ProfileContext'
+import Transactions from '../pages/transactions/Transactions'
 
 export default function Router() {
   return (
@@ -163,6 +164,15 @@ export default function Router() {
               </DashboardLayout>
             }
           />
+          <Route
+            path="/transactions/:id"
+            element={
+              <DashboardLayout>
+                <Transactions />
+              </DashboardLayout>
+            }
+          />
+
           <Route
             path="/:id/collection"
             element={
