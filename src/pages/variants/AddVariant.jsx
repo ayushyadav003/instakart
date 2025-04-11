@@ -18,7 +18,10 @@ const AddVariant = () => {
     price: 0,
     comparePrice: 0,
   });
-  const [productPrice, setProductPrice] = useState(0);
+  const [productPrice, setProductPrice] = useState({
+    price: 0,
+    comparePrice: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [productData, setProductData] = useState({}); // To store product data
@@ -32,7 +35,10 @@ const AddVariant = () => {
           method: "GET",
         });
         setProductData(productResponse.data);
-        setProductPrice(productResponse.data.price);
+        setProductPrice({
+          price: productResponse.data.price,
+          comparePrice: productResponse.data.comparePrice,
+        });
 
         if (variantId) {
           setIsUpdateMode(true);
@@ -134,11 +140,15 @@ const AddVariant = () => {
       const variantData = {
         title: formData.title,
         quantity: formData.quantity,
-        price: formData.price !== 0 ? formData.price : productPrice,
+        price: formData.price !== 0 ? formData.price : productPrice.price,
         comparePrice:
-          formData.comparePrice !== 0 ? formData.comparePrice : productPrice,
+          formData.comparePrice !== 0
+            ? formData.comparePrice
+            : productPrice.comparePrice,
         media: uploadedMediaUrls,
       };
+
+      console.log(variantData, "variantData");
 
       if (isUpdateMode) {
         // Update existing variant
