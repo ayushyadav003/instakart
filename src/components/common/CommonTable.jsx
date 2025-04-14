@@ -45,12 +45,6 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
                   <TableCell component="th">
                     {row?.description || '--'}
                   </TableCell>
-<<<<<<< HEAD
-                  <TableCell component="th">
-                    {row?.description ? stripHTML(row.description) : "--"}
-                  </TableCell>
-=======
->>>>>>> 4ff8c606341e90f90d8d33cce248430836ae770b
                   <TableCell>₹{row?.price}</TableCell>
                   <TableCell component="th">
                     <div className="centerItem">

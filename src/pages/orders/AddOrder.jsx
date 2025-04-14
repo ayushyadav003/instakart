@@ -3,10 +3,10 @@ import "../../components/styles/Order.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Delete } from "@mui/icons-material";
-import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ApiWithToken } from "../../services/ApiWithToken";
 import { apiConfig } from "../../services/ApiConfig";
+import toast from "react-hot-toast";
 
 const AddOrder = () => {
   const { orderId } = useParams(); // Get orderId from route
@@ -38,6 +38,8 @@ const AddOrder = () => {
   const [isUpdate, setIsUpdate] = useState(false); // Track if it's an update
   const [isEditable, setIsEditable] = useState(false); // Track if it's an update
   const originalPaymentRef = useRef(null);
+
+  console.log(suggestions)
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -91,7 +93,6 @@ const AddOrder = () => {
           setSearchTerm("");
           setSuggestions([]);
         } catch (error) {
-          console.error("Error fetching order:", error);
           toast.error("Failed to load order details.", {
             position: "bottom-right",
           });
@@ -108,12 +109,16 @@ const AddOrder = () => {
     if (inputSearchVal !== "") {
       try {
         const apiOptions = {
-          url: `${apiConfig.productUrl}/search`, // Use the correct API endpoint
+          url: `${apiConfig.searchProduct}`, // Use the correct API endpoint
           method: "GET", // Or POST, depending on your API
           params: { q: inputSearchVal },
         };
         const searchResponse = await ApiWithToken(apiOptions);
-        setSuggestions(searchResponse.data);
+        if(searchResponse?.data?.statusCode === 200){
+          setSuggestions(searchResponse.data?.products);
+        }else{
+          toast.error("No data found!")
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
         toast.error("Error fetching products. Please try again.", {
@@ -375,8 +380,6 @@ const AddOrder = () => {
         </Link>
         <h2 className="heading">{orderId ? "Update Order" : "Create Order"}</h2>
       </div>
-      <ToastContainer limit={1} position="bottom-right" autoClose={3000} />
-
       <div className="section">
         <h3>Products</h3>
         <div className="input-group" ref={containerRef}>
@@ -392,9 +395,9 @@ const AddOrder = () => {
             Remove all products
           </button>
 
-          {suggestions.length > 0 && (
+          {suggestions?.length > 0 && (
             <ul className="suggestions">
-              {suggestions.map((product) => (
+              {suggestions?.map((product) => (
                 <div className="suggestion-item" key={product._id}>
                   <input
                     onChange={(e) =>
