@@ -90,6 +90,9 @@
             background-color: #000;
             color: #fff;
           }
+          .cartBtn{
+            border: 1px solid gray;
+          }
         }
       }
     }
@@ -99,7 +102,6 @@
 .shopping-cart {
   width: 550px;
   // height: 423px;
-  margin: 10px auto;
   background: #ffffff;
   box-shadow: 1px 2px 3px 0px rgba(0, 0, 0, 0.1);
   border-radius: 6px;
@@ -107,12 +109,19 @@
   flex-direction: column;
 
   .title {
-    height: 60px;
+    // height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-bottom: 1px solid #e1e8ee;
-    padding: 20px 30px;
+    padding: 15px 30px;
     color: #5e6977;
-    font-size: 18px;
-    font-weight: 400;
+    font-size: 16px;
+    font-weight: 600;
+
+    svg{
+      font-size: 21px;
+    }
   }
 
   .item {
@@ -204,15 +213,17 @@
   padding: 20px 5%;
   .productDetailsSection {
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
     .productImage {
       display: flex;
       // align-items: center;
-      gap: 1rem;
+      gap: 12px;
       border: 1px solid #dedede;
-      padding: 30px 16px;
+      border-radius: 16px;
+      padding: 20px;
       .imageList {
         img {
+          border-radius: 4px;
           height: 70px;
           width: 70px;
           object-fit: contain;
@@ -220,6 +231,7 @@
         }
       }
       .mainImg {
+        border-radius: 8px;
         width: 410px;
         height: 410px;
         // border-radius: 16px;
@@ -243,6 +255,7 @@
         padding: 0 10px;
       }
       .productPrice {
+        margin: 0 0 20px 0;
         .price {
           font-weight: 500;
           margin: 0 10px 0 0;
@@ -269,11 +282,29 @@
           margin: 0 0 20px 0;
         }
         span {
-          border: 1.15px solid #535353;
+          border: 1.15px solid #dedede;
+          color: gray;
+          border-radius: 4px;
           padding: 7px;
           font-weight: 500;
           font-size: 12px;
           cursor: pointer;
+        }
+      }
+      .ratingWrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        span {
+          background: #339705;
+          padding: 4px 5px 2px 5px;
+          font-size: 14px;
+          border-radius: 4px;
+          color: #fff;
+        }
+        svg{
+          color: goldenrod;
         }
       }
       .buttonContainer {
@@ -295,6 +326,9 @@
         .buyButton {
           background-color: #000;
           color: #fff;
+        }
+        .cartBtn{
+          border: 1px solid gray;
         }
       }
     }

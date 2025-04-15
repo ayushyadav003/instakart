@@ -6,6 +6,8 @@ import { useDispatch } from 'react-redux'
 import { startLoading, stopLoading } from '../../../redux/features/userSlice'
 import { apiConfig } from '../../../services/ApiConfig'
 import { ApiWithToken } from '../../../services/ApiWithToken'
+import { StarOutline } from '@mui/icons-material'
+import { Button } from '@mui/material'
 
 function ProductPage() {
   const { productId } = useParams()
@@ -64,9 +66,15 @@ function ProductPage() {
         <div className="productDetails">
           <h1>{productData?.title}</h1>
           <p className="productDescription">{productData.description}</p>
-          <div className="productPrice">
-            <span className="comparePrice"> ₹ {productData.comparePrice}</span>
-            <span className="price"> ₹ {productData.price}</span>
+          <div className="ratingWrapper">
+            <span>4.5</span>
+            <div>
+            <StarOutline />
+            <StarOutline />
+            <StarOutline />
+            <StarOutline />
+            <StarOutline />
+            </div>
           </div>
           <div className="variantWrapper">
             <p>Options</p>
@@ -74,11 +82,16 @@ function ProductPage() {
               <span>Default</span>
             </div>
           </div>
+          <div className="productPrice">            
+            <span className="comparePrice"> ₹ {productData.comparePrice}</span>
+            <span className="price"> ₹ {productData.price}</span>
+          </div>
+
           <div className="buttonContainer">
-            <button className="buyButton">Buy Now</button>
-            <button onClick={() => addToCart()}>
+            <Button className="buyButton">Buy Now</Button>
+            <Button onClick={() => addToCart()} className='cartBtn'>
               <ShoppingCartOutlinedIcon /> Add to Cart
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -5,25 +5,35 @@ import FacebookIcon from '@mui/icons-material/Facebook'
 import InstagramIcon from '@mui/icons-material/Instagram'
 import TwitterIcon from '@mui/icons-material/Twitter'
 import './StoreLayout.scss'
-import { Drawer } from '@mui/material'
+import { Badge, Drawer } from '@mui/material'
 import Cart from '../../components/collection/cart/Cart'
 
 const StoreLayout = ({ children }) => {
   const [cart, setCart] = useState(false)
+  const [cartItems, setCartItems] = useState(
+    JSON.parse(localStorage.getItem('cartProducts')) || [],
+  )
+
   return (
     <div className="store-layout">
       {/* Header */}
       <header className="store-header">
         <div className="logo">My Store</div>
         <div className="cart-icon">
-          <ShoppingCartOutlinedIcon fontSize="medium" onClick={()=> setCart(true)} />
+        <Badge badgeContent={cartItems?.length || 0} color="secondary">
+
+          <ShoppingCartOutlinedIcon
+            fontSize="medium"
+            onClick={() => setCart(true)}
+          />
+        </Badge>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="store-content">{children}</main>
-      <Drawer anchor={"right"} open={cart} onClose={() => setCart(false)}>
-        <Cart />
+      <Drawer anchor={'right'} open={cart} onClose={() => setCart(false)}>
+        <Cart cartItems={cartItems} setCartItems={setCartItems} setCart={setCart} />
       </Drawer>
       {/* Footer */}
       <footer className="store-footer">
@@ -60,7 +70,7 @@ const StoreLayout = ({ children }) => {
               </a>
             </div>
           </div>
-        </div>
+        </div> 
         <p className="footer-bottom">
           &copy; 2025 My Store. All rights reserved.
         </p>

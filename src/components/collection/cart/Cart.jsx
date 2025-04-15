@@ -1,13 +1,8 @@
-import { useState } from 'react'
 import '../CollectionPage.scss'
-import { Clear, Delete, DeleteForever } from '@mui/icons-material'
-export default function Cart() {
-  const [cartItems, setCartItems] = useState(
-    JSON.parse(localStorage.getItem('cartProducts')) || [],
-  )
-
+import { Clear, Delete } from '@mui/icons-material'
+export default function Cart({ cartItems, setCartItems, setCart }) {
   const calculateTotalAmount = () => {
-    return cartItems.reduce((acc, current) => {
+    return cartItems?.reduce((acc, current) => {
       let price = current?.price
       return price + acc
     }, 0)
@@ -15,7 +10,9 @@ export default function Cart() {
 
   return (
     <div className="shopping-cart">
-      <div className="title">Shopping Bag</div>
+      <div className="title">
+        Shopping Bag <Clear onClick={() => setCart(false)} />
+      </div>
       <div>
         {cartItems?.length > 0 &&
           cartItems?.map((item) => (
