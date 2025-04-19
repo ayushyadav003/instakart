@@ -20,30 +20,32 @@ const StoreLayout = ({ children }) => {
       <header className="store-header">
         <div className="logo">My Store</div>
         <div className="cart-icon">
-        <Badge badgeContent={cartItems?.length || 0} color="secondary">
-
-          <ShoppingCartOutlinedIcon
-            fontSize="medium"
-            onClick={() => setCart(true)}
-          />
-        </Badge>
+          <Badge badgeContent={cartItems?.length || 0} color="secondary">
+            <ShoppingCartOutlinedIcon
+              fontSize="medium"
+              onClick={() => setCart(true)}
+            />
+          </Badge>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="store-content">{children}</main>
       <Drawer anchor={'right'} open={cart} onClose={() => setCart(false)}>
-        <Cart cartItems={cartItems} setCartItems={setCartItems} setCart={setCart} />
+        <Cart
+          cartItems={cartItems}
+          setCartItems={setCartItems}
+          setCart={setCart}
+        />
       </Drawer>
       {/* Footer */}
-      <footer className="store-footer">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h4>About Us</h4>
-            <p>We provide high-quality handmade and customized products.</p>
+      <footer className="storeFooter">
+        <div className="footerContent">
+          <div className="footerSection">
+            <img src="/assets/images/logo/logo_light.png" />
           </div>
-          <div className="footer-section">
-            <h4>Quick Links</h4>
+          <div className="footerSection">
+            <h4>Categories</h4>
             <ul>
               <li>
                 <a href="#">Home</a>
@@ -56,24 +58,56 @@ const StoreLayout = ({ children }) => {
               </li>
             </ul>
           </div>
-          <div className="footer-section">
-            <h4>Follow Us</h4>
-            <div className="social-icons">
-              <a href="#">
-                <FacebookIcon fontSize="small" />
-              </a>
-              <a href="#">
-                <InstagramIcon fontSize="small" />
-              </a>
-              <a href="#">
-                <TwitterIcon fontSize="small" />
-              </a>
-            </div>
+          <div className="footerSection">
+            <h4>Contact Us</h4>
+            <ul>
+              <li>
+                <a href="#">Home</a>
+              </li>
+              <li>
+                <a href="#">Shop</a>
+              </li>
+              <li>
+                <a href="#">Contact</a>
+              </li>
+            </ul>
           </div>
-        </div> 
-        <p className="footer-bottom">
-          &copy; 2025 My Store. All rights reserved.
-        </p>
+          <div className="footerSection">
+            <h4>Support</h4>
+            <ul>
+              <li>
+                <a href="#">Home</a>
+              </li>
+              <li>
+                <a href="#">Shop</a>
+              </li>
+              <li>
+                <a href="#">Contact</a>
+              </li>
+            </ul>
+          </div>
+          <div className="footerSection">
+              <h4>Follow Us</h4>
+              <div className="socialIcons">
+                <a href="#">
+                  <FacebookIcon fontSize="small" />
+                </a>
+                <a href="#">
+                  <InstagramIcon fontSize="small" />
+                </a>
+                <a href="#">
+                  <TwitterIcon fontSize="small" />
+                </a>
+              </div>
+            </div>
+        </div>
+        <div className="footerBottom">
+          <p>&copy; 2025 My Store. All rights reserved.</p>
+          <p>
+            <span>Terms and Conditions</span>
+            <span>Privacy Policy</span>
+          </p>
+        </div>
       </footer>
     </div>
   )
