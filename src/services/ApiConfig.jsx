@@ -9,6 +9,7 @@ export const apiConfig = {
 
   //products
   getProductList: `${apiUrl}/products/getAllProducts`,
+  searchProduct: `${apiUrl}/products/search`,
   getProductById: `${apiUrl}/products`,
   updateProduct: `${apiUrl}/products`,
   createProduct: `${apiUrl}/products`,

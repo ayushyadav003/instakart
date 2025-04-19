@@ -6,6 +6,7 @@ import { apiConfig } from '../../services/ApiConfig'
 import { ApiWithToken } from '../../services/ApiWithToken'
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
+import StoreLayout from '../../layouts/store/StoreLayout'
 
 const category = [
   'Shirts',
@@ -49,6 +50,24 @@ const CollectionPage = () => {
     }
   }
 
+  const addToCart = (newProduct) => {
+    const existingCart = JSON.parse(localStorage.getItem('cartProducts')) || []
+
+    const productIndex = existingCart.findIndex(
+      (item) => item._id === newProduct._id,
+    )
+
+    if (productIndex !== -1) {
+      existingCart[productIndex].quantity += 1
+    } else {
+      existingCart.push({ ...newProduct, quantity: 1 })
+    }
+
+    localStorage.setItem('cartProducts', JSON.stringify(existingCart))
+
+    console.log('Product added to cart:', newProduct)
+  }
+
   useEffect(() => {
     if (businessName) {
       getCollections()
@@ -56,49 +75,60 @@ const CollectionPage = () => {
   }, [businessName])
 
   return (
-    <div className="collection-page">
-      <div className="categoryWrapper">
-        <h4>Category</h4>
-        <div className="categories">
-          {category.map((data, i) => (
-            <div key={i}>
-              <input type="checkbox" />
-              <p>{data}</p>
+    <div>
+      <StoreLayout>
+        <div className="collection-page">
+          <div className="categoryWrapper">
+            <h4>Category</h4>
+            <div className="categories">
+              {category.map((data, i) => (
+                <div key={i}>
+                  <input type="checkbox" />
+                  <p>{data}</p>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+          <div className="productWrapper">
+            {collections?.length > 0 &&
+              collections.map((product) => (
+                <div key={product.id} className="productCard">
+                  <div
+                    className="imageContainer"
+                    onClick={() => handleProductClick(product?._id)}
+                  >
+                    <img
+                      src={product.mediaUrls[0]}
+                      alt={product.name}
+                      className="product-image"
+                    />
+                  </div>
+                  <div className="productDetails">
+                    <div
+                      className="inner"
+                      onClick={() => handleProductClick(product?._id)}
+                    >
+                      <p className="product-name">{product.title}</p>
+                      <h5 className="product-price">₹{product.price}</h5>
+                    </div>
+
+                    <p className="description">{product.description}</p>
+
+                    <div className="buttonContainer">
+                      <button className="buyButton">Buy Now</button>
+                      <button
+                        className="cartButton"
+                        onClick={() => addToCart(product)}
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
         </div>
-      </div>
-      <div className="productWrapper">
-        {collections?.length > 0 &&
-          collections.map((product) => (
-            <div
-              key={product.id}
-              className="productCard"
-              onClick={() => handleProductClick(product?._id)}
-            >
-              <div className="imageContainer">
-                <img
-                  src={product.mediaUrls[0]}
-                  alt={product.name}
-                  className="product-image"
-                />
-              </div>
-              <div className="productDetails">
-                <div className="inner">
-                  <p className="product-name">{product.title}</p>
-                  <h5 className="product-price">₹{product.price}</h5>
-                </div>
-
-                <p className="description">{product.description}</p>
-
-                <div className="buttonContainer">
-                  <button className="buyButton">Buy Now</button>
-                  <button className="cartButton">Add to Cart</button>
-                </div>
-              </div>
-            </div>
-          ))}
-      </div>
+      </StoreLayout>
     </div>
   )
 }

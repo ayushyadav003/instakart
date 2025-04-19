@@ -1,96 +1,55 @@
+import '../CollectionPage.scss'
+import { Clear, Delete } from '@mui/icons-material'
+export default function Cart({ cartItems, setCartItems, setCart }) {
+  const calculateTotalAmount = () => {
+    return cartItems?.reduce((acc, current) => {
+      let price = current?.price
+      return price + acc
+    }, 0)
+  }
 
-export default function Cart() {
   return (
-    <div>
-      <div className="shopping-cart">
-        <div className="title">Shopping Bag</div>
+    <div className="shopping-cart">
+      <div className="title">
+        Shopping Bag <Clear onClick={() => setCart(false)} />
+      </div>
+      <div>
+        {cartItems?.length > 0 &&
+          cartItems?.map((item) => (
+            <div className="item" key={item?._id}>
+              <div className="description">
+                <img src={item?.mediaUrls[0]} alt="" />
+                <div>
+                  <span>{item?.title}</span>
+                  <span>{item?.varient?.title}</span>
+                </div>
+              </div>
 
-        <div className="item">
-          <div className="buttons">
-            <span className="delete-btn"></span>
-            <span className="like-btn"></span>
-          </div>
+              <div className="quantity">
+                {item?.quantity < 2 ? (
+                  <Delete className="dltBtn" />
+                ) : (
+                  <button className="plus-btn" type="button" name="button">
+                    -
+                  </button>
+                )}
+                <input type="text" name="name" value={item?.quantity} />
+                <button className="minus-btn" type="button" name="button">
+                  +
+                </button>
+              </div>
 
-          <div className="image">
-            <img src="item-1.png" alt="" />
-          </div>
-
-          <div className="description">
-            <span>Common Projects</span>
-            <span>Bball High</span>
-            <span>White</span>
-          </div>
-
-          <div className="quantity">
-            <button className="plus-btn" type="button" name="button">
-              <img src="plus.svg" alt="" />
-            </button>
-            <input type="text" name="name" value="1" />
-            <button className="minus-btn" type="button" name="button">
-              <img src="minus.svg" alt="" />
-            </button>
-          </div>
-
-          <div className="total-price">$549</div>
+              <div className="total-price">
+                Rs. {item?.price * item?.quantity}
+              </div>
+            </div>
+          ))}
+      </div>
+      <div className="cartFooter">
+        <div className="priceInfo">
+          <h3>Rs. {calculateTotalAmount()}</h3>
         </div>
-
-        <div className="item">
-          <div className="buttons">
-            <span className="delete-btn"></span>
-            <span className="like-btn"></span>
-          </div>
-
-          <div className="image">
-            <img src="item-2.png" alt="" />
-          </div>
-
-          <div className="description">
-            <span>Maison Margiela</span>
-            <span>Future Sneakers</span>
-            <span>White</span>
-          </div>
-
-          <div className="quantity">
-            <button className="plus-btn" type="button" name="button">
-              <img src="plus.svg" alt="" />
-            </button>
-            <input type="text" name="name" value="1" />
-            <button className="minus-btn" type="button" name="button">
-              <img src="minus.svg" alt="" />
-            </button>
-          </div>
-
-          <div className="total-price">$870</div>
-        </div>
-
-        <div className="item">
-          <div className="buttons">
-            <span className="delete-btn"></span>
-            <span className="like-btn"></span>
-          </div>
-
-          <div className="image">
-            <img src="item-3.png" alt="" />
-          </div>
-
-          <div className="description">
-            <span>Our Legacy</span>
-            <span>Brushed Scarf</span>
-            <span>Brown</span>
-          </div>
-
-          <div className="quantity">
-            <button className="plus-btn" type="button" name="button">
-              <img src="plus.svg" alt="" />
-            </button>
-            <input type="text" name="name" value="1" />
-            <button className="minus-btn" type="button" name="button">
-              <img src="minus.svg" alt="" />
-            </button>
-          </div>
-
-          <div className="total-price">$349</div>
-        </div>
+        <button>Checkout</button>
       </div>
     </div>
   )
