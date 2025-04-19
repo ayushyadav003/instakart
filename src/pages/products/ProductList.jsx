@@ -1,55 +1,55 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import CommonTable from '../../components/common/CommonTable'
-import { productTableHead } from '../../utils/tableHead'
-import './ProductList.scss'
-import { startLoading, stopLoading } from '../../redux/features/userSlice'
-import { ApiWithToken } from '../../services/ApiWithToken'
-import { apiConfig } from '../../services/ApiConfig'
-import { useDispatch } from 'react-redux'
-import { toast } from 'react-toastify'
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import CommonTable from "../../components/common/CommonTable";
+import { productTableHead } from "../../utils/tableHead";
+import "./ProductList.scss";
+import { startLoading, stopLoading } from "../../redux/features/userSlice";
+import { ApiWithToken } from "../../services/ApiWithToken";
+import { apiConfig } from "../../services/ApiConfig";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function ProductList() {
-  const [products, setProducts] = useState([])
-  const dispatch = useDispatch()
-  const userdata = JSON.parse(localStorage.getItem('instakart-user-details'))
+  const [products, setProducts] = useState([]);
+  const dispatch = useDispatch();
+  const userdata = JSON.parse(localStorage.getItem("instakart-user-details"));
 
   const onDelete = async (rowItem) => {
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete "${rowItem.title}"?`,
-    )
-    if (!confirmDelete) return
+      `Are you sure you want to delete "${rowItem.title}"?`
+    );
+    if (!confirmDelete) return;
 
     try {
-      dispatch(startLoading())
+      dispatch(startLoading());
       const apiOptions = {
-        url: `${apiConfig.productUrl}/${rowItem._id}`, // Use correct API endpoint
-        method: 'DELETE',
-      }
-      await ApiWithToken(apiOptions)
+        url: `${apiConfig.deleteProduct}/${rowItem._id}`, // Use correct API endpoint
+        method: "DELETE",
+      };
+      await ApiWithToken(apiOptions);
 
       setProducts((prevProducts) =>
-        prevProducts.filter((product) => product._id !== rowItem._id),
-      )
-      toast.success('Product deleted successfully')
+        prevProducts.filter((product) => product._id !== rowItem._id)
+      );
+      toast.success("Product deleted successfully");
     } catch (error) {
-      console.error('Error deleting product:', error)
-      toast.error('Failed to delete the product. Please try again.')
+      console.error("Error deleting product:", error);
+      toast.error("Failed to delete the product. Please try again.");
     } finally {
-      dispatch(stopLoading())
+      dispatch(stopLoading());
     }
-  }
+  };
 
   // Fetch Products from API
   const fetchProducts = async () => {
     try {
-      dispatch(startLoading())
+      dispatch(startLoading());
       const apiOptions = {
         url: apiConfig.getProductList,
-        method: 'POST',
+        method: "POST",
         data: { businessName: userdata?.businessName },
-      }
-      const response = await ApiWithToken(apiOptions)
+      };
+      const response = await ApiWithToken(apiOptions);
 
       if (response?.data?.statusCode === 200) {
         const formattedProducts = response?.data?.data?.map((product) => ({
@@ -57,22 +57,22 @@ export default function ProductList() {
           image:
             product.mediaUrls?.length > 0
               ? product.mediaUrls[0]
-              : '/assets/images/default.png',
-        }))
+              : "/assets/images/default.png",
+        }));
 
-        setProducts(formattedProducts)
+        setProducts(formattedProducts);
       }
     } catch (error) {
-      console.error('Error fetching products:', error)
-      toast.error('Failed to fetch products.')
+      console.error("Error fetching products:", error);
+      toast.error("Failed to fetch products.");
     } finally {
-      dispatch(stopLoading())
+      dispatch(stopLoading());
     }
-  }
+  };
 
   useEffect(() => {
-    fetchProducts()
-  }, [])
+    fetchProducts();
+  }, []);
 
   return (
     <div className="table-list">
@@ -90,5 +90,5 @@ export default function ProductList() {
         type="products"
       />
     </div>
-  )
+  );
 }
