@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -42,19 +42,18 @@ const AddProduct = () => {
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
 
-  const [formData, setFormData] = useState(defaultFormData);
-  const [initialFormData, setInitialFormData] = useState(null);
   const [productData, setProductData] = useState(null);
   const [categoryInput, setCategoryInput] = useState("");
   const [refreshVariants, setRefreshVariants] = useState(false);
 
-  const { handleChange, values, handleSubmit, setFieldValue } = useFormik({
-    initialValues: defaultFormData,
-    // validationSchema: validationSchema,
-    onSubmit: (values) => {
-      productSubmitHandle(values);
-    },
-  });
+  const { handleChange, values, handleSubmit, setFieldValue, setValues } =
+    useFormik({
+      initialValues: defaultFormData,
+      // validationSchema: validationSchema,
+      onSubmit: (values) => {
+        productSubmitHandle(values);
+      },
+    });
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -66,32 +65,22 @@ const AddProduct = () => {
         if (url) {
           const { status, data } = await ApiWithToken({ url, method: "GET" });
           if (status === 200) {
-            setProductData(data);
-            const { mediaUrls = [], ...rest } = data;
+            setProductData(data.product);
+            const { mediaUrls = [], ...rest } = data.product;
             const fetchedFormData = {
               ...defaultFormData,
               ...rest,
               media: mediaUrls,
             };
-            setFormData(fetchedFormData);
-            setInitialFormData(fetchedFormData);
-            // Update Formik values on successful fetch
-            Object.keys(fetchedFormData).forEach((key) => {
-              setFieldValue(key, fetchedFormData[key]);
-            });
+            await setValues(fetchedFormData);
           } else {
             toast.error("Failed to fetch product data.", {
               position: "bottom-right",
             });
           }
         } else {
-          setFormData(defaultFormData);
-          setInitialFormData(null);
+          setValues(defaultFormData);
           setProductData(null);
-          // Reset Formik values for adding a new product
-          Object.keys(defaultFormData).forEach((key) => {
-            setFieldValue(key, defaultFormData[key]);
-          });
         }
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -104,7 +93,7 @@ const AddProduct = () => {
     };
     fetchProduct();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productId, refreshVariants, dispatch, setFieldValue]);
+  }, [productId, dispatch, setValues]);
 
   const handleMediaChange = ({ target: { files } }) => {
     setFieldValue("media", [...values.media, ...Array.from(files)]);
@@ -171,18 +160,18 @@ const AddProduct = () => {
       const apiOptions = {
         url: productId
           ? `${apiConfig.updateProduct}/${productId}`
-          : apiConfig.createProduct,
+          : apiConfig.productUrl,
         method: productId ? "PUT" : "POST",
         data: productDataToSend,
       };
-      console.log(apiOptions, "apiOptions from submit");  
+      console.log(apiOptions, "apiOptions from submit");
       const successMessage = productId
         ? "Product updated successfully!"
         : "Product added successfully!";
 
       await ApiWithToken(apiOptions);
       toast.success(successMessage, { position: "bottom-right" });
-      // navigate("/products");
+      navigate("/products");
     } catch (error) {
       console.error("Error submitting form:", error);
       const errorMsg =
