@@ -13,6 +13,7 @@ export const apiConfig = {
   getProductById: `${apiUrl}/products`,
   updateProduct: `${apiUrl}/products`,
   createProduct: `${apiUrl}/products`,
+  deleteProduct: `${apiUrl}/products`,
 
   //variants
   variantUrl: `${apiUrl}/variants`,
