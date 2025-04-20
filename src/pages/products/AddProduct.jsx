@@ -42,14 +42,29 @@ const AddProduct = () => {
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
 
-  const [productData, setProductData] = useState(null);
   const [categoryInput, setCategoryInput] = useState("");
   const [refreshVariants, setRefreshVariants] = useState(false);
+
+  const validationSchema = Yup.object({
+  title: Yup.string().required('Title is required'),
+  price: Yup.number().required('Price is required').positive('Price must be positive'),
+  comparePrice: Yup.number()
+    .positive('Compare-at price must be positive')
+    .when('price', (price, schema) =>
+      price && schema.lessThan(price, 'Compare-at price must be less than Price')
+    ),
+  weight: Yup.number().min(0, 'Weight cannot be negative'),
+  length: Yup.number().min(0, 'Length cannot be negative'),
+  breadth: Yup.number().min(0, 'Breadth cannot be negative'),
+  height: Yup.number().min(0, 'Height cannot be negative'),
+  quantity: Yup.number().integer('Quantity must be an integer').min(0, 'Quantity cannot be negative'),
+  categories: Yup.array().of(Yup.string()),
+});
 
   const { handleChange, values, handleSubmit, setFieldValue, setValues } =
     useFormik({
       initialValues: defaultFormData,
-      // validationSchema: validationSchema,
+      validationSchema: validationSchema,
       onSubmit: (values) => {
         productSubmitHandle(values);
       },
@@ -65,7 +80,6 @@ const AddProduct = () => {
         if (url) {
           const { status, data } = await ApiWithToken({ url, method: "GET" });
           if (status === 200) {
-            setProductData(data.product);
             const { mediaUrls = [], ...rest } = data.product;
             const fetchedFormData = {
               ...defaultFormData,
@@ -80,7 +94,6 @@ const AddProduct = () => {
           }
         } else {
           setValues(defaultFormData);
-          setProductData(null);
         }
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -92,7 +105,6 @@ const AddProduct = () => {
       }
     };
     fetchProduct();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId, dispatch, setValues]);
 
   const handleMediaChange = ({ target: { files } }) => {
@@ -183,7 +195,7 @@ const AddProduct = () => {
   };
 
   const handleDeleteVariant = async (variantToDelete) => {
-    if (!productData || !variantToDelete) return;
+    if (!values || !variantToDelete) return;
     dispatch(startLoading());
     try {
       await ApiWithToken({
@@ -380,11 +392,11 @@ const AddProduct = () => {
         {productId && (
           <div className="form-group">
             <label>Variants</label>
-            {productData?.variants && productData.variants.length > 0 ? (
+            {values?.variants && values.variants.length > 0 ? (
               <div className="variants-table-container">
                 <CommonTable
                   head={variantTableHead}
-                  rows={productData.variants}
+                  rows={values.variants}
                   type="variants"
                   onDelete={handleDeleteVariant}
                 />
@@ -393,7 +405,7 @@ const AddProduct = () => {
               <p>No variants added yet.</p>
             )}
             <Link to={`/add-variant/${productId}`} className="variant-btn">
-              {productData?.variants?.length > 0
+              {values?.variants?.length > 0
                 ? "Manage Variants"
                 : "Add Variants"}
             </Link>
@@ -425,6 +437,7 @@ const AddProduct = () => {
                 onChange={handleChange}
               />
             </div>
+            
           </div>
           {values.comparePrice &&
             parseFloat(values.price) >= parseFloat(values.comparePrice) && (
