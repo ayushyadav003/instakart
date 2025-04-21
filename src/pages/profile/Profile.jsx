@@ -1,14 +1,25 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../../components/styles/Profile.scss";
 import { apiConfig } from "../../services/ApiConfig";
 import { ApiWithToken } from "../../services/ApiWithToken";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ProfileContext } from "../../context/ProfileContext";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Documents from "./BankingInfo";
 
 // Reusable Input Component
-const ProfileInput = ({ label, name, value, readOnly, onChange, ...props }) => {
+const ProfileInput = ({
+  label,
+  name,
+  value,
+  readOnly,
+  onChange,
+  error,
+  touched,
+  ...props
+}) => {
   return (
     <div className="info-item">
       <span className="info-label">{label}</span>
@@ -18,21 +29,42 @@ const ProfileInput = ({ label, name, value, readOnly, onChange, ...props }) => {
         readOnly={readOnly}
         onChange={onChange}
         className={
-          readOnly ? "info-value info-readonly" : "info-value info-input"
+          (readOnly ? "info-value info-readonly" : "info-value info-input") +
+          (error && touched ? " error" : "")
         }
         {...props}
       />
+      {error && touched && <div className="error-message">{error}</div>}
     </div>
   );
 };
 
-const Profile = () => {
-  const { profilePicture, setProfilePicture } = useContext(ProfileContext);
+// Yup Validation Schema
+const profileValidationSchema = Yup.object().shape({
+  name: Yup.string()
+    .required("Name is required")
+    .min(2, "Name must be at least 2 characters"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  phone: Yup.string()
+    .required("Phone number is required")
+    .matches(/^[0-9]{10}$/, "Phone number must be 10 digits"),
+  businessName: Yup.string().required("Business Name is required"),
+  country: Yup.string(),
+  city: Yup.string(),
+  postalCode: Yup.string(),
+  taxId: Yup.string(),
+});
 
-  const [user, setUser] = useState({
+const Profile = () => {
+  const [isEditing, setIsEditing] = useState(false);
+  const fileInputRef = useRef(null);
+  const [tabState, setTabState] = useState("personalInfo");
+  const initialValues = {
     username: "",
     email: "",
-    profileImage: "https://via.placeholder.com/100",
+    profileImage: "",
     name: "",
     phone: "",
     businessName: "",
@@ -40,10 +72,17 @@ const Profile = () => {
     city: "",
     postalCode: "",
     taxId: "",
-  });
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [isEditing, setIsEditing] = useState(false); // Single editing state
-  const fileInputRef = useRef(null);
+  };
+
+  const { handleSubmit, handleChange, values, errors, touched, setValues } =
+    useFormik({
+      initialValues,
+      validationSchema: profileValidationSchema,
+      onSubmit: async (formValues) => {
+        handleSave(formValues);
+      },
+      enableReinitialize: false,
+    });
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -53,8 +92,8 @@ const Profile = () => {
           method: "GET",
         };
         const response = await ApiWithToken(apiOptions);
-        console.log(response.data.profilePicture, "rajatrajat");
-        setUser({
+
+        const profileData = {
           username: response.data.fullName || "",
           email: response.data.email || "",
           name: response.data.fullName || "",
@@ -64,13 +103,14 @@ const Profile = () => {
           city: response.data.city || "",
           postalCode: response.data.postalCode || "",
           taxId: response.data.taxId || "",
-          profileImage: response.data.profilePicture || "",
-        });
+          profileImage: response.data.profilePicture || "", // Provide default
+        };
 
-        console.log(response.data, "data");
+        setValues(profileData); // Initialize Formik values
       } catch (error) {
         console.error("Error fetching profile:", error);
-        setUser({
+        const errorData = {
+          // Setting default values in case of error.
           username: "Error",
           email: "",
           name: "",
@@ -80,8 +120,9 @@ const Profile = () => {
           city: "",
           postalCode: "",
           taxId: "",
-          profileImage: "https://via.placeholder.com/100",
-        });
+          profileImage: "",
+        };
+        setValues(errorData);
       }
     };
     fetchProfile();
@@ -108,11 +149,11 @@ const Profile = () => {
   const handleImageChange = async (event) => {
     const file = event.target.files?.[0];
     if (file) {
-      setSelectedImage(file);
       const reader = new FileReader();
       reader.onload = async (e) => {
         if (e.target?.result) {
-          setUser((prev) => ({ ...prev, profileImage: e.target.result }));
+          const imageUrl = e.target.result;
+          setValues((prev) => ({ ...prev, profileImage: imageUrl }));
 
           const formData = new FormData();
           formData.append("file", file);
@@ -122,16 +163,17 @@ const Profile = () => {
               "https://api.cloudinary.com/v1_1/dobzi0uvb/image/upload",
               formData
             );
-            const imageUrl = cloudinaryResponse.data.secure_url;
-            console.log("Hrllo")
-            setProfilePicture(imageUrl);
-            setUser((prev) => ({ ...prev, profileImage: imageUrl }));
+            const cloudinaryImageUrl = cloudinaryResponse.data.secure_url;
+            setValues((prev) => ({
+              ...prev,
+              profileImage: cloudinaryImageUrl,
+            }));
 
             try {
               const apiOptions = {
                 url: `${apiConfig.profile}`,
                 method: "PUT",
-                data: { profileImage: imageUrl },
+                data: { profileImage: cloudinaryImageUrl },
               };
               await ApiWithToken(apiOptions);
               console.log("Profile image updated on backend");
@@ -141,7 +183,7 @@ const Profile = () => {
               );
               if (storedUserDetails) {
                 const userDetails = JSON.parse(storedUserDetails);
-                userDetails.profilePicture = imageUrl;
+                userDetails.profilePicture = cloudinaryImageUrl;
                 localStorage.setItem(
                   "instakart-user-details",
                   JSON.stringify(userDetails)
@@ -152,20 +194,16 @@ const Profile = () => {
               toast.error("Failed to update profile image.", {
                 position: toast.POSITION.BOTTOM_RIGHT,
               });
-              setUser((prev) => ({
-                ...prev,
-                profileImage: "https://via.placeholder.com/100",
-              }));
+              const defaultImage = "https://via.placeholder.com/100";
+              setValues((prev) => ({ ...prev, profileImage: defaultImage }));
             }
           } catch (error) {
             console.error("Error uploading image to Cloudinary:", error);
             toast.error("Error uploading image.", {
               position: toast.POSITION.BOTTOM_RIGHT,
             });
-            setUser((prev) => ({
-              ...prev,
-              profileImage: "https://via.placeholder.com/100",
-            }));
+            const defaultImage = "https://via.placeholder.com/100";
+            setValues((prev) => ({ ...prev, profileImage: defaultImage }));
           }
         }
       };
@@ -173,26 +211,15 @@ const Profile = () => {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (formValues) => {
     setIsEditing(false);
-    //alert("Profile Information Updated!"); // Remove alert
     toast.success("Profile Information Updated!");
 
     try {
-      const updatedData = {
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        businessName: user.businessName,
-        country: user.country,
-        city: user.city,
-        postalCode: user.postalCode,
-        taxId: user.taxId,
-      };
       const apiOptions = {
         url: `${apiConfig.profile}`,
         method: "PUT",
-        data: updatedData,
+        data: formValues,
       };
 
       await ApiWithToken(apiOptions);
@@ -204,134 +231,136 @@ const Profile = () => {
     }
   };
 
-  const handleEdit = () => {
-    setIsEditing(!isEditing);
-  };
+  // Define the fields for the Personal Information tab
+  const personalInfoFields = [
+    { label: "Name", name: "name", type: "text" },
+    { label: "Email Address", name: "email", type: "email" },
+    { label: "Phone", name: "phone", type: "text" },
+    { label: "Business Name", name: "businessName", type: "text" },
+    { label: "Country", name: "country", type: "text" },
+    { label: "City / State", name: "city", type: "text" },
+    { label: "Postal Code", name: "postalCode", type: "text" },
+    { label: "TAX ID", name: "taxId", type: "text" },
+  ];
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUser((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // Define tabs for sidebar
+  const tabs = [
+    { name: "personalInfo", label: "Personal Information" },
+    { name: "bankingInfo", label: "Banking information" },
+    { name: "myProducts", label: "My Products" },
+    { name: "myDocuments", label: "My documents" },
+  ];
 
   return (
-    <div className="profile-container">
-      <div className="header-section">
-        <div
-          className="profile-image-container"
-          onClick={() => {
-            if (isEditing && fileInputRef.current) {
-              fileInputRef.current.click();
-            }
-          }}
-          style={{ cursor: isEditing ? "pointer" : "default" }}
-        >
-          {user.profileImage !== "" ? (
-            <img
-              src={user.profileImage}
-              alt="Profile"
-              className="profile-image"
-            />
-          ) : (
-            <div className="profile-image-placeholder">
-              <span className="profile-image-text">{user?.name[0]}</span>
-            </div>
-          )}
-          {isEditing && (
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="profile-image-input"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-            />
-          )}
-        </div>
-        <div className="header-info">
-          <h1 className="profile-name">{user.username}</h1>
-          <p className="profile-location">{user.phone}</p>
-          <p className="profile-title">{user.email}</p>
+    <div className="profile-wrapper">
+      <div className="profile-sidebar">
+        <div className="profile-sidebar-inner">
+          <ul className="sidebar-list">
+            {tabs.map((tabItem) => (
+              <li
+                key={tabItem?.name}
+                onClick={() => {
+                  setTabState(tabItem?.name);
+                  setIsEditing(false);
+                }}
+                name={tabItem?.name}
+                className="sidebar-item"
+              >
+                {tabItem.label}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
+      <div className="profile-container">
+        {tabState === "personalInfo" && (
+          <div>
+            <div className="header-section">
+              <div
+                className="profile-image-container"
+                onClick={() => {
+                  if (isEditing && fileInputRef.current) {
+                    fileInputRef.current.click();
+                  }
+                }}
+                style={{ cursor: isEditing ? "pointer" : "default" }}
+              >
+                {values.profileImage !== "" ? (
+                  <img
+                    src={values.profileImage}
+                    alt="Profile"
+                    className="profile-image"
+                  />
+                ) : (
+                  <div className="profile-image-placeholder">
+                    <span className="profile-image-text">
+                      {values?.name[0]}
+                    </span>
+                  </div>
+                )}
+                {isEditing && (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="profile-image-input"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                  />
+                )}
+              </div>
+              <div className="header-info">
+                <h1 className="profile-name">{values.username}</h1>
+                <p className="profile-location">{values.phone}</p>
+                <p className="profile-title">{values.email}</p>
+              </div>
+            </div>
 
-      <div className="section-container">
-        <div className="section-header">
-          <h2 className="section-title">Personal Information</h2>
-          <button className="edit-button" onClick={handleEdit}>
-            {isEditing ? "Cancel" : "Edit"}
-          </button>
-        </div>
-        <div className="info-grid">
-          <ProfileInput
-            label="Name"
-            name="name"
-            value={user.name}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-          <ProfileInput
-            label="Email Address"
-            type="email"
-            name="email"
-            value={user.email}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-          <ProfileInput
-            label="Phone"
-            name="phone"
-            value={user.phone}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-          <ProfileInput
-            label="Business Name"
-            name="businessName"
-            value={user.businessName}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-          <ProfileInput
-            label="Country"
-            name="country"
-            value={user.country}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-          <ProfileInput
-            label="City / State"
-            name="city"
-            value={user.city}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-          <ProfileInput
-            label="Postal Code"
-            name="postalCode"
-            value={user.postalCode}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-          <ProfileInput
-            label="TAX ID"
-            name="taxId"
-            value={user.taxId}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-        </div>
-        {isEditing && (
-          <div className="button-container">
-            <button className="save-button" onClick={handleSave}>
-              Save
-            </button>
+            <form onSubmit={handleSubmit} className="section-container">
+              <div className="section-header">
+                <h2 className="section-title">Personal Information</h2>
+                <div
+                  className="edit-button"
+                  onClick={() => setIsEditing(!isEditing)}
+                >
+                  {isEditing ? "Cancel" : "Edit"}
+                </div>
+              </div>
+              <div className="info-grid">
+                {personalInfoFields.map((field) => (
+                  <ProfileInput
+                    key={field.name}
+                    label={field.label}
+                    name={field.name}
+                    type={field.type}
+                    value={values[field.name] || ""}
+                    readOnly={!isEditing}
+                    onChange={handleChange}
+                    error={errors[field.name]}
+                    touched={touched[field.name]}
+                  />
+                ))}
+              </div>
+              {isEditing && (
+                <div className="button-container">
+                  <button className="save-button" type="submit">
+                    Save
+                  </button>
+                </div>
+              )}
+            </form>
           </div>
         )}
+        {tabState === "bankingInfo" && <div>BankingInfo</div>}
+        {tabState === "myProducts" && <div>My Products</div>}
+        {tabState === "myDocuments" && (
+          <div>
+            <Documents />
+          </div>
+        )}
+
+        <ToastContainer limit={1} position="bottom-right" autoClose={3000} />
       </div>
-      <ToastContainer limit={1} position="bottom-right" autoClose={3000} />
     </div>
   );
 };

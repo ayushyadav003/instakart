@@ -1,16 +1,71 @@
 @import "./color.scss";
 
-.profile-container {
-  text-align: left;
-  width: 100%;
-  max-width: 800px;
+/* ----------- SIDEBAR STYLING (delhivery-like) ----------- */
+
+.profile-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f9fafb;
+  font-family: Arial, sans-serif;
+  max-width: 1000px;
   margin: 2rem auto;
-  background-color: $white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  font-family: Arial, sans-serif;
+
+  .profile-sidebar {
+    width: 240px;
+    background-color: $white;
+    border-right: 1px solid #e5e7eb;
+    padding: 1rem 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.02);
+
+    .profile-sidebar-inner {
+      display: flex;
+      flex-direction: column;
+
+      .sidebar-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        .sidebar-item {
+          padding: 15px 10px;
+          font-size: 0.95rem;
+          color: #333;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+          border-bottom: 1px solid #726b6b24;
+
+          &:hover {
+            background-color: #f3f4f6;
+          }
+
+          &.active {
+            background-color: #e5f0ff;
+            font-weight: bold;
+            color: #1d4ed8;
+          }
+
+          &:first-child {
+            padding-top: 1em;
+          }
+        }
+      }
+    }
+  }
+
+  .profile-container {
+    text-align: left;
+    width: 100%;
+
+    background-color: $white;
+
+    padding: 1rem;
+    font-family: Arial, sans-serif;
+  }
 }
+
+/* ----------- EXISTING PROFILE STYLING ----------- */
 
 .header-section {
   display: flex;
@@ -106,6 +161,12 @@
 .info-item {
   display: flex;
   flex-direction: column;
+
+  .error-message {
+    color: red;
+    font-size: 11px;
+    margin-top: 0.5rem;
+  }
 }
 
 .info-label {
@@ -141,11 +202,23 @@
   margin-top: 1rem;
 }
 
-
+/* ----------- RESPONSIVE ----------- */
 
 @media (max-width: 600px) {
+  .profile-wrapper {
+    flex-direction: column;
+  }
+
+  .profile-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
   .profile-container {
+    max-width: 100%;
     padding: 1rem;
+    margin: 0 auto;
   }
 
   .header-section {
