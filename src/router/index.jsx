@@ -15,7 +15,7 @@ import AddProduct from '../pages/products/AddProduct'
 import OrderList from '../pages/orders/OrderList'
 import AddOrder from '../pages/orders/AddOrder'
 import AddVariant from '../pages/variants/AddVariant'
-import Analytics from '../pages/analytics/Analytics'
+// import Analytics from '../pages/analytics/Analytics'
 import Profile from '../pages/profile/Profile'
 import { ProfileProvider } from '../context/ProfileContext'
 import Transactions from '../pages/transactions/Transactions'
@@ -156,14 +156,14 @@ export default function Router() {
               </DashboardLayout>
             }
           />
-          <Route
+          {/* <Route
             path="/analytics"
             element={
               <DashboardLayout>
                 <Analytics />
               </DashboardLayout>
             }
-          />
+          /> */}
           <Route
             path="/transactions/:id"
             element={

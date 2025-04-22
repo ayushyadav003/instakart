@@ -7,7 +7,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Documents from "./BankingInfo";
+import BankingInfo from "./BankingInfo";
+import Documents from "./Documents";
 
 // Reusable Input Component
 const ProfileInput = ({
@@ -61,6 +62,9 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef(null);
   const [tabState, setTabState] = useState("personalInfo");
+  const [bankingDetails,setBankingDetails] = useState(null);
+  const [initialDocuments, setInitialDocuments] = useState(null)
+
   const initialValues = {
     username: "",
     email: "",
@@ -73,6 +77,7 @@ const Profile = () => {
     postalCode: "",
     taxId: "",
   };
+
 
   const { handleSubmit, handleChange, values, errors, touched, setValues } =
     useFormik({
@@ -107,6 +112,10 @@ const Profile = () => {
         };
 
         setValues(profileData); // Initialize Formik values
+        setBankingDetails(response.data.bankDetails); // Set banking details
+        setInitialDocuments(response.data.documents); // Set initial documents  
+        console.log("Profile data fetched:", profileData);  
+        console.log(initialValues, "initialValues"); // Log initial values
       } catch (error) {
         console.error("Error fetching profile:", error);
         const errorData = {
@@ -247,9 +256,10 @@ const Profile = () => {
   const tabs = [
     { name: "personalInfo", label: "Personal Information" },
     { name: "bankingInfo", label: "Banking information" },
-    { name: "myProducts", label: "My Products" },
     { name: "myDocuments", label: "My documents" },
   ];
+
+  // console.log(initialValues, "initialValues");
 
   return (
     <div className="profile-wrapper">
@@ -351,11 +361,10 @@ const Profile = () => {
             </form>
           </div>
         )}
-        {tabState === "bankingInfo" && <div>BankingInfo</div>}
-        {tabState === "myProducts" && <div>My Products</div>}
+        {tabState === "bankingInfo" && <div><BankingInfo  bankingDetails={bankingDetails} /></div>}
         {tabState === "myDocuments" && (
           <div>
-            <Documents />
+            <Documents initialDocuments={initialDocuments} />
           </div>
         )}
 

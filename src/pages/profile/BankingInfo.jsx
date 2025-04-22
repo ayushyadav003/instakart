@@ -38,9 +38,9 @@ const ProfileInput = ({
   );
 };
 
-const BankingInfo = () => {
+const BankingInfo = ({bankingDetails}) => {
   const [isEditing, setIsEditing] = useState(false);
-  const initialValues = {
+    const initialValues = {
     beneficiaryName: "",
     accountNumber: "",
     reEnterAccountNumber: "",
@@ -48,6 +48,18 @@ const BankingInfo = () => {
     ifsc: "",
     bankName: "ICICI Bank",
   };
+  if(bankingDetails){
+    initialValues.beneficiaryName = bankingDetails.beneficiaryName || "";
+    initialValues.accountNumber = bankingDetails.accountNumber || "";
+    initialValues.reEnterAccountNumber =
+      bankingDetails.reEnterAccountNumber || "";
+    initialValues.ifsc = bankingDetails.ifsc || "";
+    initialValues.bankName = bankingDetails.bankName || "ICICI Bank";
+  }
+
+
+
+  console.log(bankingDetails, "bankingDetails");
 
   const validationSchema = Yup.object({
     beneficiaryName: Yup.string().required("Beneficiary Name is required"),
@@ -79,16 +91,17 @@ const BankingInfo = () => {
 
   const handleSave = async (formValues) => {
     setIsEditing(false);
-    toast.success("Profile Information Updated!");
+  
 
     try {
       const apiOptions = {
         url: `${apiConfig.profile}`,
         method: "PUT",
-        data: formValues,
+        data: {bankDetails:formValues},
       };
 
       await ApiWithToken(apiOptions);
+      toast.success("Profile Information Updated!");
     } catch (error) {
       console.error("Failed to update profile:", error);
       toast.error("Failed to update profile information");
@@ -98,11 +111,12 @@ const BankingInfo = () => {
   return (
     <div className="banking-info-container">
       <div
-        className="banking-info-header"
+        className="info-header"
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          marginBottom:'1.5rem'
         }}
       >
         <h2 className="banking-info-title">Banking Details</h2>
