@@ -1,3 +1,5 @@
+
+
 // const apiUrl = 'https://instakart-backend.onrender.com/api'
 const apiUrl = "/api/v1";
 
@@ -6,6 +8,12 @@ export const apiConfig = {
   signup: `${apiUrl}/auth/signup`,
   login: `${apiUrl}/auth/login`,
   profile:`${apiUrl}/auth/profile`,
+  
+  getUsers: `${apiUrl}/auth/getAllUsers`,
+  getSingleUser : `${apiUrl}/auth/getSingleUser`,
+  updateProfile: `${apiUrl}/auth/profile`,
+  updateProfileAdmin: `${apiUrl}/auth/updateUserProfileAdmin`,
+
 
   //products
   getProductList: `${apiUrl}/products/getAllProducts`,

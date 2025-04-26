@@ -131,11 +131,15 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
 
             case "users":
               return (
-                <TableRow key={row._id}>
+                <TableRow key={row?._id}
+                onClick={() => navigate(`/admin/userProfile/${row?._id}`)}
+                style={{ cursor: "pointer" }}>  
+                
                   <TableCell component="th">{i + 1}</TableCell>
-                  <TableCell component="th">{row.name}</TableCell>
-                  <TableCell component="th">{row.email}</TableCell>
-                  <TableCell>{row.role}</TableCell>
+                  <TableCell component="th">{row?.fullName}</TableCell>
+                  <TableCell component="th">{row?.email}</TableCell>
+                  <TableCell component="th">{row?.mobile}</TableCell>
+                  <TableCell component="th">{row?.type}</TableCell>
                   <TableCell component="th">
                     <div className="centerItem">
                       <span

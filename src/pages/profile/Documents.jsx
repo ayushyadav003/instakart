@@ -6,7 +6,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { apiConfig } from "../../services/ApiConfig";
 import { ApiWithToken } from "../../services/ApiWithToken";
-import { FaTimesCircle } from "react-icons/fa";
 import axios from "axios"; // Import axios for Cloudinary upload
 
 const Documents = ({ initialDocuments }) => {
@@ -57,12 +56,6 @@ const Documents = ({ initialDocuments }) => {
     enableReinitialize: true,
   });
 
-  // useEffect(() => {
-  //   if (initialDocuments) {
-  //     resetForm({ values: initialValues });
-  //   }
-  // }, [initialDocuments, resetForm, initialValues]);
-
   const handleRemoveImage = (fieldName) => {
     setFieldValue(fieldName, ""); // Clear the URL
   };
@@ -107,7 +100,7 @@ const Documents = ({ initialDocuments }) => {
       const apiOptions = {
         url: `${apiConfig.profile}`,
         method: "PUT",
-        data: {documents:profileData},
+        data: {documents:formValues},
         headers: {
           "Content-Type": "application/json", // Or the appropriate content type for your API
         },

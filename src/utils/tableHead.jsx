@@ -26,4 +26,13 @@ export const orderTableHead = [
   "Delete",
 ];
 
+export const userTableHead = [
+  "S no.",
+  "Name",
+  "Email",
+  "Phone",
+  "Role",
+  "Delete",
+];
+
 export const variantTableHead = ["S no.", "Image", "Title", "Price","Delete"];

@@ -65,9 +65,13 @@ export default function Login() {
           "Content-Type": "application/json",
         },
       };
+
+      
       const response = await axios(apiOptions);
+
       if (response?.status === 200) {
         const resData = response?.data;
+       
         localStorage.setItem("instakart-user-details", JSON.stringify(resData));
 
         if (rememberMe) {
@@ -89,7 +93,15 @@ export default function Login() {
         }
 
         setProfilePicture(resData?.profilePicture);
+        if(resData.type === "admin"){
+        window.location.href = "admin/dashboard";
+
+        }
+        else{
         window.location.href = "/dashboard";
+
+        }
+        // window.location.href = "/dashboard";
         toast.success("Logged in Successfully");
 
         setLoading(false);

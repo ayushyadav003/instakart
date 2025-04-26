@@ -1,0 +1,145 @@
+/* UserProfile.css */
+.user-profile-container {
+  padding: 5%;
+  font-family: sans-serif;
+}
+
+.user-info-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  margin-right: 15px;
+}
+
+.user-details {
+  flex-grow: 1;
+}
+
+.user-name {
+  margin-bottom: 5px;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.user-contact {
+  margin-bottom: 3px;
+  color: #555;
+}
+
+.tab-container {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ccc;
+}
+
+.tab-container button {
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  font-size: 1em;
+  cursor: pointer;
+  outline: none;
+  border-bottom: 2px solid transparent;
+  margin-right: 15px;
+}
+
+.tab-container button.active {
+  color: #007bff;
+  border-bottom: 2px solid #007bff;
+  font-weight: bold;
+}
+
+.information-section {
+  margin-bottom: 20px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.grid-container.document-grid{
+  grid-template-columns: 1fr 1fr;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group img{
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.form-group select {
+  appearance: none; /* Remove default arrow */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5.4%200-10.8%202.2-14.6%205.4-3.8%203.2-6.1%207.5-6.1%2012.2v181c0%204.7%202.3%209%206.1%2012.2%203.9%203.2%209.2%205.4%2014.6%205.4h255.2c5.4%200%2010.8-2.2%2014.6-5.4%203.8-3.2%206.1-7.5%206.1-12.2V81.6c0-4.7-2.3-9-6.1-12.2zM227.9%20174.1L154.1%20247.9c-2.9%202.9-7.7%202.9-10.6%200l-73.8-73.8c-2.9-2.9-2.9-7.7%200-10.6s7.7-2.9%2010.6%200l62.9%2062.9%2062.9-62.9c2.9-2.9%207.7-2.9%2010.6%200s2.9%207.7%200%2010.6z%22/%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 12px;
+  padding-right: 30px;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.button-container button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.button-container button:first-child {
+  background-color: #007bff;
+  color: white;
+}
+
+.button-container button:last-child {
+  background-color: #f8f9fa;
+  color: #007bff;
+  border: 1px solid #007bff;
+}
+
+.button-container button:hover {
+  opacity: 0.9;
+}

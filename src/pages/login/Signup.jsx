@@ -77,6 +77,7 @@ export default function Signup() {
 
       const response = await axios(apiOptions)
       if (response?.status === 201) {
+      
         toast.success(response?.message || 'User created Successfully')
         navigate('/')
       } else {

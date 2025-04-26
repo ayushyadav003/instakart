@@ -19,6 +19,8 @@ import AddVariant from '../pages/variants/AddVariant'
 import Profile from '../pages/profile/Profile'
 import { ProfileProvider } from '../context/ProfileContext'
 import Transactions from '../pages/transactions/Transactions'
+import Admin from '../pages/admin/Admin'
+import UserProfile from '../pages/admin/UserProfile'
 
 export default function Router() {
   return (
@@ -43,6 +45,12 @@ export default function Router() {
             </LoginLayout>
           }
         /> */}
+           <Route
+            path="/forget-password"
+            element={
+                <Admin />
+            }
+          />
           <Route
             path="/forget-password"
             element={
@@ -155,6 +163,20 @@ export default function Router() {
                 <Profile />
               </DashboardLayout>
             }
+          />
+           <Route
+            path="/admin/dashboard"
+            element={
+                <Admin />
+            }
+            
+          />
+            <Route
+            path="/admin/userProfile/:userId"
+            element={
+                <UserProfile />
+            }
+            
           />
           {/* <Route
             path="/analytics"
