@@ -16,11 +16,7 @@ import SellIcon from '@mui/icons-material/Sell'
 const userData = JSON.parse(localStorage.getItem('instakart-user-details'))
 
 export const sideBarOption = [
-  {
-    title: 'Dashboard',
-    icon: <SpaceDashboardIcon fontSize="small" />,
-    link: '/dashboard',
-  },
+  { title: 'Dashboard', icon: '/images/icons/invoice.png', link: '/dashboard' },
   {
     title: 'Products',
     icon: <ShoppingBasket fontSize="small" />,
@@ -79,7 +75,6 @@ export const mobileBottomOptions = [
     link: '/cod',
   },
 
-  { title: 'Analytics', icon: '/images/icons/invoice.png', link: '/analytics' },
   { title: 'FAQ', icon: '/images/icons/faq.png', link: '/faq' },
   { title: 'Support', icon: '/images/icons/support.png', link: '/support' },
 ]

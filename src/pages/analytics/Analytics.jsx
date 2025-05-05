@@ -20,7 +20,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
+
 import { Box } from "@mui/system";
 import { Grid } from "@mui/material";
 import { Chip } from "@mui/material";
@@ -53,39 +53,19 @@ const getTotalOrdersData = () => ({
 });
 
 const getPaymentsReceivedData = () => ({
-  title: "Payments Received",
+  title: "Total No. of products",
   payments: 1500.5,
   yesterdayPayments: 1200,
   change: 25,
 });
 
 const getTotalItemsSoldData = () => ({
-  title: "Total Items Sold",
+  title: "Net sales",
   items: 500,
   yesterdayItems: 450,
   change: 11.11,
 });
 
-const getReturningCustomerRateData = () => ({
-  title: "Returning Customer Rate", //Added title
-  rate: 75,
-  yesterdayRate: 60,
-  change: 27,
-});
-
-const getOrdersFulfilledData = () => ({
-  title: "Orders Fulfilled", //Added title
-  orders: 0,
-  yesterdayOrders: 5,
-  change: -100,
-});
-
-const getOrdersData = () => ({
-  title: "Orders", //Added title
-  orders: 16,
-  yesterdayOrders: 11,
-  change: 43,
-});
 
 const getTotalSalesOverTimeData = () => ({
   labels: [
@@ -532,10 +512,12 @@ const Analytics = () => {
       </Box>
       <SalesOverview />
 
-      <Box sx={{ display: "flex", gap: 3, mt: 4, flexWrap: "wrap" }}>
-        <TotalSalesOverTime sx={{ flex: 2, minWidth: 300 }} />
-        <TotalSalesBreakdown sx={{ flex: 1, minWidth: 300 }} />
-        <SalesBreakdownPieChart sx={{ flex: 1, minWidth: 300 }} />
+      <Box>
+        <Box sx={{ display: "flex",gap: 4, my: 4 }}>
+        <TotalSalesOverTime  />
+        <TotalSalesBreakdown  />
+        </Box>
+        <SalesBreakdownPieChart/>
       </Box>
     </Box>
   );
