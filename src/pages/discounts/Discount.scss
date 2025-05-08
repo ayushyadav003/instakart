@@ -1,0 +1,192 @@
+.discount-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+  
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+  
+      h2 {
+        font-size: 24px;
+        font-weight: bold;
+      }
+  
+      .add-button {
+        background-color: #000;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+  
+        &:hover {
+          background-color: #333;
+        }
+      }
+    }
+  
+    .form-container {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+  
+        label {
+          font-weight: bold;
+          margin-bottom: 5px;
+        }
+  
+        input,
+        select {
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 14px;
+          width: 100%;
+        }
+
+     
+  
+        input[type="number"] {
+          -moz-appearance: textfield;
+  
+          &::-webkit-inner-spin-button,
+          &::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+        }
+      }
+  
+      button {
+        -webkit-border-radius: 10;
+  -moz-border-radius: 10;
+  border-radius: 10px;
+  -webkit-box-shadow: 2px 4px 0px #666666;
+  -moz-box-shadow: 2px 4px 0px #666666;
+  box-shadow: 2px 4px 0px #666666;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  background: #000000;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  &:hover {
+    background: #3d3d3d;
+    text-decoration: none;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+      }
+    }
+  
+    .table-container {
+      margin-top: 20px;
+  
+      .table {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        overflow: hidden;
+  
+        .table-header,
+        .table-row {
+          display: grid;
+          grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
+          padding: 10px;
+          font-size: 14px;
+          align-items: center;
+          justify-items: center;
+        }
+  
+        .table-header {
+          background-color: #f5f5f5;
+          font-weight: bold;
+        }
+  
+        .table-row {
+          border-bottom: 1px solid #ddd;
+  
+          &:hover {
+            background-color: #f9f9f9;
+          }
+  
+          .actions {
+            display: flex;
+            gap: 10px;
+  
+            .edit-btn,
+            .delete-btn {
+              background: none;
+              border: none;
+              cursor: pointer;
+              font-size: 14px;
+              color: #000;
+  
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+  
+            .delete-btn {
+              color: red;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .discount-list{
+    padding: 20px;
+
+    .header{
+        display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  button{
+    background-color: #000;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  }
+
+
+
+.add-discount-container{
+    width: 50%;
+    margin: 0 auto;
+    padding: 20px;
+
+    input:disabled{
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .add-discount-button {
+        background-color: #000;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+}

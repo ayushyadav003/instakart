@@ -9,6 +9,7 @@ import { Delete } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "@mui/material";
 import "../styles/CommonTable.scss";
+import { ToastContainer } from "react-toastify";
 
 // Utility function to strip HTML tags
 const stripHTML = (html) => {
@@ -24,7 +25,7 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
   const navigate = useNavigate();
   const renderRows = () => {
     return rows?.length > 0
-      ? rows.map((row, i) => {
+      ? rows?.map((row, i) => {
           switch (type) {
             case "products":
               return (
@@ -131,10 +132,11 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
 
             case "users":
               return (
-                <TableRow key={row?._id}
-                onClick={() => navigate(`/admin/userProfile/${row?._id}`)}
-                style={{ cursor: "pointer" }}>  
-                
+                <TableRow
+                  key={row?._id}
+                  onClick={() => navigate(`/admin/userProfile/${row?._id}`)}
+                  style={{ cursor: "pointer" }}
+                >
                   <TableCell component="th">{i + 1}</TableCell>
                   <TableCell component="th">{row?.fullName}</TableCell>
                   <TableCell component="th">{row?.email}</TableCell>
@@ -180,6 +182,33 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
                   <TableCell>₹{row?.amount}</TableCell>
                 </TableRow>
               );
+
+            case "discounts":
+              return (
+                <TableRow key={row._id}
+                onClick={() => navigate(`/discount/admin/${row?._id}`)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <TableCell>{i + 1}</TableCell>
+                  <TableCell>{row.couponName}</TableCell>
+                  <TableCell>{row.couponType}</TableCell>
+                  <TableCell>{row.discountValue || "--"}</TableCell>
+                  <TableCell>{row.discountPercentage + `%` || "--"}</TableCell>
+                  <TableCell>
+                    <div className="centerItem">
+                      <span
+                        className="removeBtn btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(row);
+                        }}
+                      >
+                        <Delete fontSize="small" />
+                      </span>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
             default:
               return (
                 <TableRow key={row._id}>
@@ -213,6 +242,8 @@ function CommonTable({ rows, type, head, onEdit, onDelete }) {
           <TableBody>{renderRows()}</TableBody>
         </Table>
       </TableContainer>
+      <ToastContainer limit={1} position="bottom-right" autoClose={3000} />
+
     </div>
   );
 }

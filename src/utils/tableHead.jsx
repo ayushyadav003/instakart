@@ -35,4 +35,8 @@ export const userTableHead = [
   "Delete",
 ];
 
+export const discountTableHead = [
+  "S.No", "Coupon Name", "Type", "Value", "Percentage", "Actions"
+]
+
 export const variantTableHead = ["S no.", "Image", "Title", "Price","Delete"];

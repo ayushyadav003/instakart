@@ -15,6 +15,14 @@ export const apiConfig = {
   updateProfileAdmin: `${apiUrl}/auth/updateUserProfileAdmin`,
 
 
+  //discounts
+  getDiscounts: `${apiUrl}/discounts`,
+  deleteDiscount: `${apiUrl}/discounts`,
+  createDiscount: `${apiUrl}/discounts`,
+  getDiscountById: `${apiUrl}/discounts`,
+  updateDiscount: `${apiUrl}/discounts`,  
+
+
   //products
   getProductList: `${apiUrl}/products/getAllProducts`,
   searchProduct: `${apiUrl}/products/search`,

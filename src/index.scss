@@ -85,13 +85,14 @@ body {
   }
   .error {
     color: rgb(185, 26, 26);
+    font-size: 12px;
   }
   .success {
     background-color: #3c7430ce;
   }
 }
 .tableContainer {
-  padding: 10px;
+  // padding: 10px;
   table {
     border-collapse: separate; /* Ensure border-spacing works */
     border-spacing: 0 8px; /* Add margin between rows */
@@ -109,6 +110,7 @@ body {
 
   td {
     text-align: center;
+    border-radius: 0!important;
     // border-radius: 10px;
     border: none;
     font-weight: normal;

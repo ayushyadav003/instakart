@@ -15,14 +15,12 @@ export const ApiWithToken = async ({ url, method, data, params }) => {
   }
   try {
     const res = await axios(apiOptions)
+    console.log(res, 'response')
     if (res) {
       return res
     }
+
   } catch (error) {
-    if (error?.response?.status === 401) {
-      toast.warning('Your token has been expired, Please login again.')
-      localStorage.clear()
-      window.location.href = '/'
-    }
+    return error
   }
 }

@@ -8,9 +8,9 @@ import {
   Description,
   AccountBalanceWallet,
   Assessment,
+  
 } from '@mui/icons-material'
-
-import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard'
+import DiscountIcon from '@mui/icons-material/Discount';
 import SellIcon from '@mui/icons-material/Sell'
 
 const userData = JSON.parse(localStorage.getItem('instakart-user-details'))
@@ -21,6 +21,11 @@ export const sideBarOption = [
     title: 'Products',
     icon: <ShoppingBasket fontSize="small" />,
     link: '/products',
+  },
+  {
+    title: 'Discounts',
+    icon: <DiscountIcon fontSize="small" />,
+    link: '/discounts',
   },
   {
     title: 'Order',

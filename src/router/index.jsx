@@ -21,6 +21,8 @@ import { ProfileProvider } from '../context/ProfileContext'
 import Transactions from '../pages/transactions/Transactions'
 import Admin from '../pages/admin/Admin'
 import UserProfile from '../pages/admin/UserProfile'
+import DiscountList from '../pages/discounts/DiscountList'
+import AddDiscount from '../pages/discounts/AddDiscount'
 
 export default function Router() {
   return (
@@ -145,6 +147,30 @@ export default function Router() {
             element={
               <DashboardLayout>
                 <AddProduct />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/discounts"
+            element={
+              <DashboardLayout>
+                <DiscountList />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/discount/admin/:discountId"
+            element={
+              <DashboardLayout>
+                <AddDiscount />
+              </DashboardLayout>
+            }
+          />
+            <Route
+            path="/add-discount"
+            element={
+              <DashboardLayout>
+                <AddDiscount />
               </DashboardLayout>
             }
           />
