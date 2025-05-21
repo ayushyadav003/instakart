@@ -38,6 +38,11 @@ export const sideBarOption = [
     link: '/transactions/all',
   },
   {
+    title: 'Themes',
+    icon: <AccountBalanceWallet fontSize="small" />,
+    link: '/themes',
+  },
+  {
     title: 'My Collection',
     icon: <DragIndicator />,
     link: `/collections/${userData?.businessName.replace(' ', '-')}`,

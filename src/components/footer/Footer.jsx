@@ -1,12 +1,12 @@
-import { Link } from 'react-router-dom'
-import './footer.scss'
+import { Link } from "react-router-dom";
+import "./footer.scss";
 import {
   FacebookOutlined,
   Instagram,
   LinkedIn,
   X,
   YouTube,
-} from '@mui/icons-material'
+} from "@mui/icons-material";
 
 const Footer = () => {
   return (
@@ -50,7 +50,7 @@ const Footer = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

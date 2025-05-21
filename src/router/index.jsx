@@ -23,6 +23,7 @@ import Admin from '../pages/admin/Admin'
 import UserProfile from '../pages/admin/UserProfile'
 import DiscountList from '../pages/discounts/DiscountList'
 import AddDiscount from '../pages/discounts/AddDiscount'
+import AddTheme from '../pages/themes/Themes'
 
 export default function Router() {
   return (
@@ -175,10 +176,10 @@ export default function Router() {
             }
           />
           <Route
-            path="/collections/:id"
+            path="/themes"
             element={
               <DashboardLayout>
-                <ThemeListing />
+                <AddTheme/>
               </DashboardLayout>
             }
           />

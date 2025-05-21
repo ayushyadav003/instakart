@@ -1,6 +1,4 @@
 import axios from 'axios'
-import { toast } from 'react-toastify'
-// import { toast } from "react-toastify";
 
 export const ApiWithToken = async ({ url, method, data, params }) => {
   console.log(url,method,data,params,'apiwithtoken  ')

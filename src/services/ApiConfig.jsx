@@ -1,4 +1,4 @@
-
+import { getTheme } from "../../../backend/controller/themeController";
 
 // const apiUrl = 'https://instakart-backend.onrender.com/api'
 const apiUrl = "/api/v1";
@@ -21,6 +21,10 @@ export const apiConfig = {
   createDiscount: `${apiUrl}/discounts`,
   getDiscountById: `${apiUrl}/discounts`,
   updateDiscount: `${apiUrl}/discounts`,  
+
+  //themes
+  createOrUpdateTheme: `${apiUrl}/theme`,
+  getTheme: `${apiUrl}/theme`,
 
 
   //products
