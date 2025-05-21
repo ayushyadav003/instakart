@@ -64,7 +64,7 @@ const AddProduct = () => {
   const { handleChange, values, handleSubmit, setFieldValue, setValues } =
     useFormik({
       initialValues: defaultFormData,
-      validationSchema: validationSchema,
+      // validationSchema: validationSchema,
       onSubmit: (values) => {
         productSubmitHandle(values);
       },
@@ -172,7 +172,7 @@ const AddProduct = () => {
       const apiOptions = {
         url: productId
           ? `${apiConfig.updateProduct}/${productId}`
-          : apiConfig.productUrl,
+          : apiConfig.createProduct,
         method: productId ? "PUT" : "POST",
         data: productDataToSend,
       };

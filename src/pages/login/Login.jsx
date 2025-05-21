@@ -71,7 +71,7 @@ export default function Login() {
 
       if (response?.status === 200) {
         const resData = response?.data;
-       
+       console.log("resData", resData);
         localStorage.setItem("instakart-user-details", JSON.stringify(resData));
 
         if (rememberMe) {
@@ -101,7 +101,7 @@ export default function Login() {
         window.location.href = "/dashboard";
 
         }
-        // window.location.href = "/dashboard";
+        window.location.href = "/dashboard";
         toast.success("Logged in Successfully");
 
         setLoading(false);

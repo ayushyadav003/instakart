@@ -47,7 +47,7 @@ export default function ProductList() {
       const apiOptions = {
         url: apiConfig.getProductList,
         method: "POST",
-        data: { businessName: userdata?.businessName },
+        data: { businessName: userdata?.businessName,userType:'admin' },
       };
       const response = await ApiWithToken(apiOptions);
 
